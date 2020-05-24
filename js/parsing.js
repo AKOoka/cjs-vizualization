@@ -37,15 +37,64 @@ function createACWaiting (rangeCounter, awaitedTimeStamp) {
   }
 }
 
-function parseData ({ meta, jobProfile }) {
+class ProfilingDataModel {
+    constructor() {
+        const processorsMap = new Map()
+        const jobsMap = new Map()
+        const spawnedJobsMap = new Map()
+        const atomicCountersMap = new Map()
+    }
+
+    getSpawnedRanges(jobId) {
+
+    }
+
+    getAllRanges(jobId) {
+
+    }
+
+    getAllJobsAllProcessors() {
+
+    }
+
+}
+
+function parseData({
+    atomicCounterEventsProfileData,
+    jobRegProfileData,
+    jobSpawnsProfileData,
+    samplesPerProcessor
+}) {
   const processorsMap = new Map()
   const jobsMap = new Map()
   const spawnedJobsMap = new Map()
   const atomicCountersMap = new Map()
 
-  for (let i = 0; i < meta.processorsCount; i++) {
-    processorsMap.set(i, [])
-  }
+    const samplesPerProcessor = new Map()
+    
+
+
+    for (let i = 0; i < 8; i++) {
+        processorsMap.set(i, [])
+    }
+    let j = 0;
+    for (var i = 0; i < samplesPerProcessor.size / 2; i += 2) {
+        let current = samplesPerProcessor[i]
+        let next = samplesPerProcessor[i + 1]
+        //{ jobId, jobName: name, rangeCount: i, beginTimestamp, endTimestamp }
+        processorsMap.get(current.processorId).push(samplesPerProcessor[i].timestamp
+    }
+
+    
+  //for (let i = 0; i < meta.processorsCount; i++) {
+  //  processorsMap.set(i, [])
+  //}
+
+
+
+  
+
+    
 
   jobProfile.forEach(({ jobId, computeTimeRanges, name }) => {
     const jobRanges = []
@@ -69,7 +118,7 @@ function parseData ({ meta, jobProfile }) {
 
       if (spawnerJob) {
         jobIds.forEach(job => {
-          spawnerJob.push({ jobId: job, spawnTimeStamp, ranges: jobsMap.get(job) })
+          spawnerJob.push({ jobId: job, spawnTimeStamp })
         })
       } else {
         spawnedJobsMap.set(jobId, createSpawnedJobs(jobsMap, jobIds, spawnTimeStamp))

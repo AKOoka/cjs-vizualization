@@ -141,3 +141,7 @@ class SliderChangeListener extends SliderChangeIntreface {
 document.querySelector('#user-json').onchange = onFileInput
 
 slider = initSlider(graphContainer, sliderContainer, sliderEventListeners)
+
+const file = "C:/Users/anton/source/repos/GameEngineProject/ConcurrentJobSystem/samplePreFinaleRev3x64Debug.json"
+const text = fetch(file).then((a) => a.text()).then((b) => JSON.parse(b));
+userData = parseData(text)
