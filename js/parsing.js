@@ -1,141 +1,87 @@
-function createSpawnedJobs (jobsMap, jobIds, spawnTimeStamp) {
-  const spawnedJobs = []
+function toStringObject (obj) {
+  let outputString = '\n{\n'
 
-  jobIds.forEach(job => {
-    spawnedJobs.push({ jobId: job, spawnTimeStamp, ranges: jobsMap.get(job) })
+  Object.entries(obj).forEach(([key, value]) => {
+    outputString += `\t${key}: ${value}\n`
   })
 
-  return spawnedJobs
+  outputString += '}\n'
+
+  return outputString
 }
 
-function createAC (jobsMap, creatorJobId, spawnTimeStamp, jobIds) {
-  const ac = {
-    created: {
-      jobId: creatorJobId,
-      value: jobIds.length,
-      spawnTimeStamp
-    },
-    changing: {
-      jobIds,
-      endTimeOfSpawnedJob: []
-    }
-  }
-
-  jobIds.forEach(id => {
-    const j = jobsMap.get(id)
-
-    ac.changing.endTimeOfSpawnedJob.push(j[j.length - 1].endTimestamp)
+function readJobRegProfileData (storage, data) {
+  data.forEach(({ jobId, name }) => {
+    storage.set(jobId, { name, ranges: [] })
   })
-
-  return ac
 }
 
-function createACWaiting (rangeCounter, awaitedTimeStamp) {
-  return {
-    jobRanges: `range${rangeCounter}`,
-    awaitedTimeStamp
+function readRangeData (storage, data) {
+  const sortedData = data.sort((a, b) => a.processorId - b.processorId)
+
+  for (let i = 0; i < sortedData.length / 2; i += 2) {
+    const cur = sortedData[i]
+    const next = sortedData[i + 1]
+
+    if (cur.job === next.job) {
+      storage.get(cur.job).ranges.push({
+        processorId: cur.processorId,
+        beginTimestamp: cur.timestamp,
+        endTimestamp: next.timestamp
+      })
+    } else {
+      alert ('Different jobIds for one range')
+
+      // log names of jobs instead of current and next
+      throw new Error(`\n current: ${toStringObject(cur)};\n next: ${toStringObject(next)};`)
+    }
   }
 }
 
-class ProfilingDataModel {
-    constructor() {
-        const processorsMap = new Map()
-        const jobsMap = new Map()
-        const spawnedJobsMap = new Map()
-        const atomicCountersMap = new Map()
+function readJobSpawnsData (storage, data) {
+  data.forEach(({ ac, jobs, spawnerJob, timestamp }) => {
+    const spawner = storage.get(spawnerJob)
+    const spawnEvent = { ac, jobs, timestamp }
+
+    if (!spawner) {
+      storage.set(spawnerJob, [spawnEvent])
+    } else {
+      spawner.push(spawnEvent)
     }
-
-    getSpawnedRanges(jobId) {
-
-    }
-
-    getAllRanges(jobId) {
-
-    }
-
-    getAllJobsAllProcessors() {
-
-    }
-
+  })
 }
 
-function parseData({
-    atomicCounterEventsProfileData,
-    jobRegProfileData,
-    jobSpawnsProfileData,
-    samplesPerProcessor
+function readAtomicCounterData (storage, data) {
+  data.forEach(({ acId, job, timestamp, value }) => {
+    const ac = storage.get(acId)
+
+    if (!ac) {
+      storage.set(acId, {
+        created: { job, timestamp, value },
+        changing: []
+      })
+    } else {
+      ac.changing.push({ job, timestamp, value })
+    }
+  })
+}
+
+function parseData ({
+  atomicCounterEventsProfileData,
+  jobRegProfileData,
+  jobSpawnsProfileData,
+  rangeBeginEndEventProfileData
 }) {
-  const processorsMap = new Map()
   const jobsMap = new Map()
   const spawnedJobsMap = new Map()
   const atomicCountersMap = new Map()
 
-    const samplesPerProcessor = new Map()
-    
-
-
-    for (let i = 0; i < 8; i++) {
-        processorsMap.set(i, [])
-    }
-    let j = 0;
-    for (var i = 0; i < samplesPerProcessor.size / 2; i += 2) {
-        let current = samplesPerProcessor[i]
-        let next = samplesPerProcessor[i + 1]
-        //{ jobId, jobName: name, rangeCount: i, beginTimestamp, endTimestamp }
-        processorsMap.get(current.processorId).push(samplesPerProcessor[i].timestamp
-    }
-
-    
-  //for (let i = 0; i < meta.processorsCount; i++) {
-  //  processorsMap.set(i, [])
-  //}
-
-
-
-  
-
-    
-
-  jobProfile.forEach(({ jobId, computeTimeRanges, name }) => {
-    const jobRanges = []
-
-    for (let i = 0; i < computeTimeRanges.length; i++) {
-      const { beginTimestamp, endTimestamp, processorId } = computeTimeRanges[i]
-
-      const processor = processorsMap.get(processorId)
-
-      processor.push({ jobId, jobName: name, rangeCount: i, beginTimestamp, endTimestamp })
-
-      jobRanges.push({ beginTimestamp, endTimestamp })
-    }
-
-    jobsMap.set(jobId, jobRanges)
-  })
-
-  jobProfile.forEach(({ jobId, computeTimeRanges, jobSpawns, awaitedACs }) => {
-    jobSpawns.forEach(({ jobIds, spawnTimeStamp, acId }) => {
-      const spawnerJob = spawnedJobsMap.get(jobId)
-
-      if (spawnerJob) {
-        jobIds.forEach(job => {
-          spawnerJob.push({ jobId: job, spawnTimeStamp })
-        })
-      } else {
-        spawnedJobsMap.set(jobId, createSpawnedJobs(jobsMap, jobIds, spawnTimeStamp))
-      }
-
-      atomicCountersMap.set(acId, createAC(jobsMap, jobId, spawnTimeStamp, jobIds))
-    })
-
-    for (let i = 0; i < awaitedACs.length; i++) {
-      const ac = atomicCountersMap.get(awaitedACs[i].acId)
-
-      ac.waiting = createACWaiting(i, awaitedACs[i].awaitedTimeStamp)
-    }
-  })
+  readJobRegProfileData(jobsMap, jobRegProfileData)
+  readRangeData(jobsMap, rangeBeginEndEventProfileData)
+  readJobSpawnsData(spawnedJobsMap, jobSpawnsProfileData)
+  readAtomicCounterData(atomicCountersMap, atomicCounterEventsProfileData)
 
   return {
-    processorsMap,
     jobsMap,
     spawnedJobsMap,
     atomicCountersMap
