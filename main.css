@@ -1,0 +1,48 @@
+body {
+  padding: 100px;
+}
+
+#graph {
+  width: 100%;
+  background-color: silver;
+  overflow: hidden;
+}
+
+.processor-line {
+  height: 50px;
+  border: 1px solid;
+  position: relative;
+}
+
+#slider {
+  margin-top: 50px;
+  position: relative;
+  background-color: black;
+}
+
+#slider-background {
+  display: inline-block;
+}
+
+#center-slider {
+  position: absolute;
+  display: inline-block;
+  height: 100%;
+  opacity: 0.30;
+  z-index: 0;
+  background-color: white;
+}
+
+.anchor {
+  position: absolute;
+  display: inline-block;
+  height: 100%;
+  z-index: 1;
+  background-color: magenta;
+  cursor: pointer;
+}
+
+.slider-processor {
+  height: 25px;
+  position: relative;
+}
