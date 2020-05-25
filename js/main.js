@@ -1,6 +1,6 @@
 import { parseData } from './parsing.js'
 import { sliderEventListeners, Slider, SliderChangeIntreface } from './slider.js'
-import { drawSliderBackground, getGraphViewRange, drawGraph, getProcessorsMapWidth, createProcessorDiv } from './visualization.js'
+import { drawSliderBackground, getGraphZoom, drawGraph, createProcessorDiv, binarySearch } from './visualization.js'
 
 // function generateData (processorsCount, size) {
 //   const data = {
@@ -42,7 +42,10 @@ import { drawSliderBackground, getGraphViewRange, drawGraph, getProcessorsMapWid
 //   console.log(styles)
 // })()
 
-function logUserData ({ processorsMap, jobsMap, spawnedJobsMap, atomicCountersMap }) {
+function logUserData ({ meta, processorsMap, jobsMap, spawnedJobsMap, atomicCountersMap }) {
+  console.log('-----meta-----')
+  console.log(meta)
+  console.log('----------')
   console.log('-----processorsMap-----')
   console.log(processorsMap)
   console.log('----------')
@@ -61,6 +64,7 @@ const graphContainer = document.getElementById('graph')
 const sliderContainer = document.getElementById('slider')
 
 let userData = {
+  meta: null,
   processorsMap: null,
   jobsMap: null,
   spawnedJobsMap: null,
@@ -101,24 +105,28 @@ async function onFileInput (event) {
 
   userData = parseData(json)
 
-  graphWidth = getProcessorsMapWidth(userData.processorsMap)
+  const { meta, processorsMap } = userData
+
+  graphWidth = meta.graphWidth
+
+  logUserData(userData)
+
+  slider = initSlider(graphContainer, sliderContainer, sliderEventListeners)
 
   const sliderBackground = sliderContainer.querySelector('#slider-background')
 
   removeAllChildren(sliderBackground.children)
   removeAllChildren(graphContainer.children)
 
-  for (let i = 0; i < json.meta.processorsCount; i++) {
-    graphContainer.append(createProcessorDiv(i))
+  for (const key of processorsMap.keys()) {
+    graphContainer.append(createProcessorDiv(key))
   }
 
   const sliderStart = scalePosition(slider.zoomStart, sliderContainer.offsetWidth, graphWidth)
   const sliderEnd = scalePosition(slider.zoomEnd, sliderContainer.offsetWidth, graphWidth)
 
-  drawGraph(graphContainer, userData.processorsMap, getGraphViewRange(sliderStart, sliderEnd, sliderContainer.offsetWidth, userData.processorsMap))
-  drawSliderBackground(sliderBackground, userData.processorsMap)
-
-  logUserData(userData)
+  drawGraph(graphContainer, processorsMap, getGraphZoom(sliderStart, sliderEnd, sliderContainer.offsetWidth, processorsMap))
+  drawSliderBackground(sliderBackground, processorsMap)
 
   console.timeEnd('parse')
 }
@@ -134,10 +142,8 @@ class SliderChangeListener extends SliderChangeIntreface {
     const sliderStart = scalePosition(slider.zoomStart, sliderContainer.offsetWidth, graphWidth)
     const sliderEnd = scalePosition(slider.zoomEnd, sliderContainer.offsetWidth, graphWidth)
 
-    drawGraph(graphContainer, userData.processorsMap, getGraphViewRange(sliderStart, sliderEnd, sliderContainer.offsetWidth, processorsMap))
+    drawGraph(graphContainer, userData.processorsMap, getGraphZoom(sliderStart, sliderEnd, sliderContainer.offsetWidth, userData.processorsMap))
   }
 }
 
 document.querySelector('#user-json').onchange = onFileInput
-
-slider = initSlider(graphContainer, sliderContainer, sliderEventListeners)

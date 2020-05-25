@@ -11,146 +11,119 @@ function randomColor (range, itemInRange) {
 
 }
 
-function getProcessorsMapWidth (processorsMap) {
-  let min = processorsMap.get(0)[0].beginTimestamp
-  let max = min
-
-  processorsMap.forEach(processor => {
-    processor.forEach(({ beginTimestamp, endTimestamp }) => {
-      if (beginTimestamp < min) {
-        min = beginTimestamp
-      }
-      if (endTimestamp > max) {
-        max = endTimestamp
-      }
-    })
-  })
-
-  return max - min
-}
-
-function binarySearch (number, range, rangeProp) {
+function binarySearch (jobsRange, number, range) {
   const length = range.length - 1
 
   let index = Math.round(length / 2)
 
   for (let i = 0; i < 100; i++) {
-    const curNum = range[index][rangeProp]
+    const { job, rangeCounter } = range[index]
+    const { beginTimestamp, endTimestamp } = jobsRange.get(job).ranges[rangeCounter]
 
-    if (curNum > number) {
-      index = Math.floor(index / 2)
-    } else if (curNum < number) {
-      index = Math.round(index + index / 2)
-    } else {
+    if (number >= beginTimestamp && number <= endTimestamp) {
       return index
+    } else if (number < beginTimestamp) {
+      index = Math.floor(index / 2)
+    } else {
+      index = Math.round(index + index / 2)
     }
 
-    const prevNum = range[index - 1]
-    const nextNum = range[index + 1]
-
-    if (index <= 0) {
-      return 0
-    } else if (index > length) {
-      return length
-    } else if (nextNum && curNum < number && nextNum[rangeProp] > number) {
-      return index
-    } else if (prevNum && curNum > number && prevNum[rangeProp] < number) {
-      return index - 1
+    if (index < 0 || index > range.length - 1) {
+      return false
     }
   }
 }
 
-function getGraphViewRange (sliderStart, sliderEnd, sliderWidth, processorsMap) {
+function getGraphZoom (sliderStart, sliderEnd, sliderWidth, processorsMap) {
   const processorsMapIndexes = []
 
   processorsMap.forEach(processor => {
-    if (sliderStart < processor[0].beginTimestamp && sliderEnd < processor[processor.length - 1].beginTimestamp) {
+    const startIndex = binarySearch(sliderStart, processor)
+    const endIndex = binarySearch(sliderEnd, processor)
+
+    if (startIndex && endIndex) {
+      processorsMapIndexes.push({ startIndex, endIndex })
+    } else {
       processorsMapIndexes.push(null)
-      return
-    } else if (sliderStart > processor[processor.length - 1].endTimestamp && sliderEnd > processor[processor.length - 1].endTimestamp) {
-      processorsMapIndexes.push(null)
-      return
     }
-
-    const startIndex = binarySearch(sliderStart, processor, 'beginTimestamp')
-    const endIndex = binarySearch(sliderEnd, processor, 'endTimestamp')
-
-    processorsMapIndexes.push({ startIndex, endIndex })
   })
 
   return processorsMapIndexes
 }
 
-function createSmallRangeView (jobId, rangeCount, beginTimestamp, rangeWidth) {
+function createSmallRangeView (jobId, rangeCounter, beginTimestamp, rangeWidth) {
   const rangeDiv = document.createElement('div')
 
   rangeDiv.classList.add(`job#${jobId}`)
   rangeDiv.classList.add('range')
-  rangeDiv.classList.add(`range${rangeCount}`)
+  rangeDiv.classList.add(`range${rangeCounter}`)
   rangeDiv.style.left = `${beginTimestamp}px`
   rangeDiv.style.width = `${rangeWidth}px`
 
   return rangeDiv
 }
 
-function createMediumRangeView (jobId, jobName, rangeCount, beginTimestamp, rangeWidth) {
+function createMediumRangeView (jobId, rangeCounter, beginTimestamp, rangeWidth, name) {
   const rangeDiv = document.createElement('div')
 
   rangeDiv.classList.add(`job#${jobId}`)
   rangeDiv.classList.add('range')
-  rangeDiv.classList.add(`range${rangeCount}`)
-  rangeDiv.textContent = jobName
+  rangeDiv.classList.add(`range${rangeCounter}`)
+  rangeDiv.textContent = name
   rangeDiv.style.left = `${beginTimestamp}px`
   rangeDiv.style.width = `${rangeWidth}px`
 
   return rangeDiv
 }
 
-function drawSliderBackground (sliderBackgroundDiv, processorsMap) {
+function drawSliderBackground (sliderBackgroundDiv, jobsMap, processorsMap) {
   processorsMap.forEach(processor => {
     const sliderProcessorDiv = document.createElement('div')
 
     sliderProcessorDiv.classList.add('slider-processor')
 
-    processor.forEach(range => {
-      const { jobId, rangeCount, beginTimestamp, endTimestamp } = range
-      sliderProcessorDiv.append(createSmallRangeView(jobId, rangeCount, beginTimestamp, endTimestamp - beginTimestamp))
+    processor.forEach(({ jobId, rangeCounter }) => {
+      const { beginTimestamp, endTimestamp } = jobsMap.get(jobId).ranges[rangeCounter]
+
+      sliderProcessorDiv.append(createSmallRangeView(jobId, rangeCounter, beginTimestamp, endTimestamp - beginTimestamp))
     })
 
     sliderBackgroundDiv.append(sliderProcessorDiv)
   })
 }
 
-function drawGraph (graph, processorsMap, processorsMapRange) {
+function drawGraph (graphContainer, graphZoom, processorsMap, jobsMap) {
   let processorsCounter = 0
 
-  processorsMap.forEach(processor => {
-    if (!processorsMapRange[processorsCounter]) {
-      return
+  for (const [key, value] of processorsMap.entries()) {
+    if (!graphZoom[processorsCounter]) {
+      continue
     }
 
-    const processorDiv = graph.querySelector(`#processor-${processorsCounter}`)
+    const processorDiv = graphContainer.querySelector(`#processor-${key}`)
 
-    const { startIndex, endIndex } = processorsMapRange[processorsCounter]
+    const { startIndex, endIndex } = graphZoom[processorsCounter]
 
     for (let i = startIndex; i <= endIndex; i++) {
-      const { jobId, jobName, rangeCount, beginTimestamp, endTimestamp } = processor[i]
+      const { jobId, rangeCounter } = value[i]
+      const { name, ranges } = jobsMap.get(jobId)
+      const { beginTimestamp, endTimestamp } = ranges[rangeCounter]
 
       const rangeWidth = endTimestamp - beginTimestamp
 
       let rangeView = null
 
       if (rangeWidth < 1) {
-        rangeView = createSmallRangeView(jobId, rangeCount, beginTimestamp, rangeWidth)
+        rangeView = createSmallRangeView(jobId, rangeCounter, beginTimestamp, rangeWidth)
       } else {
-        rangeView = createMediumRangeView(jobId, jobName, rangeCount, beginTimestamp, rangeWidth)
+        rangeView = createMediumRangeView(jobId, rangeCounter, beginTimestamp, rangeWidth, name)
       }
 
       processorDiv.append(rangeView)
     }
 
     processorsCounter++
-  })
+  }
 }
 
-export { drawSliderBackground, getGraphViewRange, drawGraph, getProcessorsMapWidth, createProcessorDiv }
+export { drawSliderBackground, getGraphZoom, drawGraph, createProcessorDiv, binarySearch }
