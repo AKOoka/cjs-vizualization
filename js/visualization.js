@@ -34,12 +34,12 @@ function binarySearch (jobsRange, number, range) {
   }
 }
 
-function getGraphZoom (sliderStart, sliderEnd, sliderWidth, processorsMap) {
+function getGraphZoom (jobsRange, processorsMap, sliderStart, sliderEnd, sliderWidth) {
   const processorsMapIndexes = []
 
   processorsMap.forEach(processor => {
-    const startIndex = binarySearch(sliderStart, processor)
-    const endIndex = binarySearch(sliderEnd, processor)
+    const startIndex = binarySearch(jobsRange, sliderStart, processor)
+    const endIndex = binarySearch(jobsRange, sliderEnd, processor)
 
     if (startIndex && endIndex) {
       processorsMapIndexes.push({ startIndex, endIndex })
@@ -76,16 +76,16 @@ function createMediumRangeView (jobId, rangeCounter, beginTimestamp, rangeWidth,
   return rangeDiv
 }
 
-function drawSliderBackground (sliderBackgroundDiv, jobsMap, processorsMap) {
+function drawSliderBackground (sliderBackgroundDiv, processorsMap, jobsMap) {
   processorsMap.forEach(processor => {
     const sliderProcessorDiv = document.createElement('div')
 
     sliderProcessorDiv.classList.add('slider-processor')
 
-    processor.forEach(({ jobId, rangeCounter }) => {
-      const { beginTimestamp, endTimestamp } = jobsMap.get(jobId).ranges[rangeCounter]
+    processor.forEach(({ job, rangeCounter }) => {
+      const { beginTimestamp, endTimestamp } = jobsMap.get(job).ranges[rangeCounter]
 
-      sliderProcessorDiv.append(createSmallRangeView(jobId, rangeCounter, beginTimestamp, endTimestamp - beginTimestamp))
+      sliderProcessorDiv.append(createSmallRangeView(job, rangeCounter, beginTimestamp, endTimestamp - beginTimestamp))
     })
 
     sliderBackgroundDiv.append(sliderProcessorDiv)

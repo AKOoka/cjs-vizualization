@@ -4,15 +4,36 @@ body {
 
 #graph {
   width: 100%;
+  height: 1000px;
+  position: relative;
   background-color: silver;
   overflow: hidden;
 }
 
-.processor-line {
+.processor-0 {
+  top: 0px;
+}
+
+.processor-1 {
+  top: 50px;
+}
+
+.processor-2 {
+  top: 100px;
+}
+
+.processor-3 {
+  top: 150px;
+}
+
+.processor-4 {
+  top: 200px;
+}
+/*.processor-line {
   height: 50px;
   border: 1px solid;
   position: relative;
-}
+}*/
 
 #slider {
   margin-top: 50px;

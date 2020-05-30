@@ -1,14 +1,14 @@
-function toStringObject (obj) {
-  let outputString = '\n{\n'
+// function toStringObject (obj) {
+//   let outputString = '\n{\n'
 
-  Object.entries(obj).forEach(([key, value]) => {
-    outputString += `\t${key}: ${value}\n`
-  })
+//   Object.entries(obj).forEach(([key, value]) => {
+//     outputString += `\t${key}: ${value}\n`
+//   })
 
-  outputString += '}\n'
+//   outputString += '}\n'
 
-  return outputString
-}
+//   return outputString
+// }
 
 function readJobRegProfileData (storage, data) {
   data.forEach(({ jobId, name }) => {
@@ -31,16 +31,18 @@ function readRangeData (jobsMap, processorsMap, data) {
       return
     }
 
-    const processor = processorsMap.get(processorId)
-    const processorRange = { job, rangeCounter }
+    // const processor = processorsMap.get(processorId)
+    // const processorRange = { job, rangeCounter }
 
-    if (!processor) {
-      processorsMap.set(processorId, [processorRange])
-    } else {
-      processor.push(processorRange)
-    }
+    // if (!processor) {
+    //   processorsMap.set(processorId, [processorRange])
+    // } else {
+    //   processor.push(processorRange)
+    // }
 
-    jobRanges.push({ beginTimestamp: timestamp })
+    processorsMap.push({ job, rangeCounter })
+
+    jobRanges.push({ beginTimestamp: timestamp, processorId })
 
     openRange.add(job)
   })
@@ -117,10 +119,11 @@ function parseData ({
   rangeBeginEndEventProfileData
 }) {
   const meta = {
-    graphWidth: rangeBeginEndEventProfileData[rangeBeginEndEventProfileData.length - 1].timestamp - rangeBeginEndEventProfileData[0].timestamp,
+    startTime: rangeBeginEndEventProfileData[0].timestamp,
+    endTime: rangeBeginEndEventProfileData[rangeBeginEndEventProfileData.length - 1].timestamp,
     timeUnit: 'ms'
   }
-  const processorsMap = new Map() // maybe do it like an array and in jobsMap in range save processorId
+  const processorsMap = [] // maybe do it like an array and in jobsMap in range save processorId
   const jobsMap = new Map()
   const spawnedJobsMap = new Map()
   const atomicCountersMap = new Map()

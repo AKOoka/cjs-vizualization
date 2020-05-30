@@ -1,0 +1,5 @@
+class JobsSelector {
+
+}
+
+export { JobsSelector }

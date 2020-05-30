@@ -2,6 +2,22 @@ class SliderChangeIntreface {
   update (event) {}
 }
 
+class SliderChangeListener extends SliderChangeIntreface {
+  update (zoomEvent) {
+    super.update(zoomEvent)
+
+    for (const processor of graphContainer.children) {
+      processor.replaceWith(processor.cloneNode(false))
+    }
+
+    const { meta, jobsMap, processorsMap } = userData
+    const sliderStart = scalePosition(slider.zoomStart, sliderContainer.offsetWidth, graphWidth) + meta.startingPoint
+    const sliderEnd = scalePosition(slider.zoomEnd, sliderContainer.offsetWidth, graphWidth) + meta.startingPoint
+
+    drawGraph(graphContainer, processorsMap, getGraphZoom(jobsMap, processorsMap, sliderStart, sliderEnd, sliderContainer.offsetWidth))
+  }
+}
+
 class Slider {
   constructor (graphWidth, anchorWidth, zoomVelocity, zoomStart, zoomEnd) {
     this.subscribers = []
@@ -200,4 +216,4 @@ function onMouseup (slider) {
   // console.log('onMouseup')
 }
 
-export { sliderEventListeners, Slider, SliderChangeIntreface }
+export { sliderEventListeners, Slider, SliderChangeListener }
