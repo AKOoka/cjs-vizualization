@@ -57,9 +57,20 @@ class JobsPlotter {
 
     for (const model of visibleDOMRanges.values()) {
       this.context.domRoot.append(model)
-    }
-  }
+      }
 
+
+      this.rangesAS = []
+
+      for (let i = 0; i < this.domComposer.jobModel.jobRanges.length; i++) {
+          const { job, rangeCounter } = this.domComposer.jobModel.jobRanges[i]
+          const { beginTimestamp, endTimestamp } = this.domComposer.jobModel.jobRecords.get(job).ranges[rangeCounter]
+
+          rangesAS.push({ index: i, time: beginTimestamp })
+          rangesAS.push({ index: i, time: endTimestamp })
+      }
+  }
+    //maybe we should use somthing like http://pixijs.download/release/docs/index.html to increase performance
   moveRangeTo ({ start, end }) {
     const min = this.domComposer.jobModel.meta.startTime
     const max = this.domComposer.jobModel.meta.endTime
@@ -68,17 +79,7 @@ class JobsPlotter {
     const startPos = start * width + min
     const endPos = end * width + min
 
-    const ranges = []
-
-    for (let i = 0; i < this.domComposer.jobModel.jobRanges.length; i++) {
-      const { job, rangeCounter } = this.domComposer.jobModel.jobRanges[i]
-      const { beginTimestamp, endTimestamp } = this.domComposer.jobModel.jobRecords.get(job).ranges[rangeCounter]
-
-      ranges.push({ index: i, time: beginTimestamp })
-      ranges.push({ index: i, time: endTimestamp })
-    }
-
-    const visible = ranges.filter(({ index, time }) => time >= startPos && time <= endPos)
+    const visible = this.rangesAS.filter(({ index, time }) => time >= startPos && time <= endPos)
     const allNewVisibleRanges = []
 
     visible.forEach(({ index, time }) => { allNewVisibleRanges.push(index) })
@@ -95,21 +96,20 @@ class JobsPlotter {
     new Set(newVisibleRanges).forEach(index => {
       this.context.domRoot.append(this.domComposer.jobsDOMModel[index])
     })
+        const scaleFactor = 1 / (end - start)
+        const scaleWidthFactor = 1 / (width) * scaleFactor * this.context.domRoot.offsetWidth;
+        const translateFactor = start * scaleFactor * this.context.domRoot.offsetWidth
 
     this.visibleRanges.forEach(index => {
       const range = this.domComposer.jobsDOMModel[index]
       const { job, rangeCounter } = this.domComposer.jobModel.jobRanges[index]
       const { beginTimestamp, endTimestamp } = this.domComposer.jobModel.jobRecords.get(job).ranges[rangeCounter]
 
-      const scaleFactor = (1 - (end - start)) / (end - start)
-
-      const divWidth = (endTimestamp - beginTimestamp) / (max - min) * scaleFactor * this.context.domRoot.offsetWidth
-
-      range.style.left = ((beginTimestamp - min) / (max - min) - start) * scaleFactor * this.context.domRoot.offsetWidth + 'px'
+      const divWidth = (endTimestamp - beginTimestamp) * scaleWidthFactor
+      const pos = (beginTimestamp - min) * scaleWidthFactor - translateFactor
+      range.style.left = pos + 'px'
       range.style.width = Math.max(1, divWidth) + 'px'
     })
-
-    // zoom out doesn't work properly
   }
 }
 
