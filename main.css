@@ -43,10 +43,11 @@ body {
 }
 
 .range {
-  position: absolute;
-  background-color: red;
-  display: inline-block;
-  height: 50px;
+    display: flex; /*see: https://developers.google.com/web/fundamentals/performance/rendering/avoid-large-complex-layouts-and-layout-thrashing?utm_source=devtools#avoid-forced-synchronous-layouts */
+    position: absolute;
+    background-color: red;
+    /*display: inline-block;*/
+    height: 50px;
 }
 
 .selected {
