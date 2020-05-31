@@ -2,7 +2,7 @@ body {
   padding: 100px;
 }
 
-#graph {
+#jobPlotter {
   width: 100%;
   height: 1000px;
   position: relative;
@@ -29,6 +29,30 @@ body {
 .processor-4 {
   top: 200px;
 }
+
+.processor-5 {
+  top: 250px;
+}
+
+.processor-6 {
+  top: 300px;
+}
+
+.processor-7 {
+  top: 350px;
+}
+
+.range {
+  position: absolute;
+  background-color: red;
+  display: inline-block;
+  height: 50px;
+}
+
+.selected {
+  border: 2px solid blue;
+}
+
 /*.processor-line {
   height: 50px;
   border: 1px solid;

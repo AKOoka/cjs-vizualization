@@ -5,25 +5,21 @@ class JobsDOMComposer {
     this.jobsDOMModel = []
     this.jobModel = model
 
-    // const { job, rangeCounter } = this.domComposer.jobModel.jobRanges[key]
-    //   const { beginTimeStamp, endTimeStamp } = this.domComposer.jobModel.jobRegords.get(job).ranges[rangeCounter]
-    // need to change this.jobsDOMModel.push(rangeDiv)
-    for (const [key, { name, ranges }] of model.jobRecords.entries()) {
-      for (let i = 0; i < ranges.length; i++) {
-        const { beginTimestamp, endTimestamp, processorId } = ranges[i]
+    for (const { job, rangeCounter } of this.jobModel.jobRanges.values()) {
+      const { name, ranges } = this.jobModel.jobRecords.get(job)
+      const { beginTimestamp, endTimestamp, processorId } = ranges[rangeCounter]
 
-        const rangeDiv = document.createElement('div')
+      const rangeDiv = document.createElement('div')
 
-        rangeDiv.classList.add(`processor-${processorId}`)
-        rangeDiv.classList.add(`job-${key}`)
-        rangeDiv.classList.add('range')
-        rangeDiv.classList.add(`range-${i}`)
-        rangeDiv.textContent = name
-        rangeDiv.style.left = `${beginTimestamp}px`
-        rangeDiv.style.width = `${endTimestamp - beginTimestamp}px`
+      rangeDiv.classList.add(`processor-${processorId}`)
+      rangeDiv.classList.add(`job-${job}`)
+      rangeDiv.classList.add('range')
+      rangeDiv.classList.add(`range-${rangeCounter}`)
+      rangeDiv.textContent = name
+      rangeDiv.style.left = `${beginTimestamp}px`
+      rangeDiv.style.width = `${endTimestamp - beginTimestamp}px`
 
-        this.jobsDOMModel.push(rangeDiv)
-      }
+      this.jobsDOMModel.push(rangeDiv)
     }
   }
 

@@ -19,6 +19,18 @@ async function onFileInput (event) {
   console.log(model)
 }
 
-jobsPlotter.setContext({ domRoot: document.getElementById('graph') })
+jobsPlotter.setContext({
+  domRoot: document.querySelector('#jobPlotter'),
+  styleData: document.querySelector('#range-styles')
+})
 
 document.querySelector('#user-json').onchange = onFileInput
+
+document.querySelector('#test').onclick = () => { jobsPlotter.changeJobColor('green') }
+
+document.querySelector('#change-range').onclick = () => {
+  const start = document.querySelector('#start-range').value
+  const end = document.querySelector('#end-range').value
+
+  jobsPlotter.moveRangeTo({ start, end })
+}

@@ -15,18 +15,21 @@ function binarySearch (jobsRange, number, range) {
   const length = range.length - 1
 
   let index = Math.round(length / 2)
+  let step = index / 2
 
-  for (let i = 0; i < 100; i++) {
+  while (true) {
     const { job, rangeCounter } = range[index]
     const { beginTimestamp, endTimestamp } = jobsRange.get(job).ranges[rangeCounter]
 
     if (number >= beginTimestamp && number <= endTimestamp) {
       return index
     } else if (number < beginTimestamp) {
-      index = Math.floor(index / 2)
+      index = Math.floor(index - step)
     } else {
-      index = Math.round(index + index / 2)
+      index = Math.round(index + step)
     }
+
+    step /= 2
 
     if (index < 0 || index > range.length - 1) {
       return false

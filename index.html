@@ -6,19 +6,18 @@
   <link rel="stylesheet" type="text/css" href="main.css">
 </head>
 <body>
+<button id="test">change color</button>
+
+<input type="number" value="0" id="start-range">
+<input type="number" value="1" id="end-range">
+<button id="change-range">set range</button>
+
 <input type="file" id="user-json" accept=".json">
 
-<div id="graph"></div>
+<div id="jobPlotter"></div>
 <div id="slider"></div>
 
-<style type="text/css" id="range-styles">
-.range {
-  position: absolute;
-  background-color: red;
-  display: inline-block;
-  height: 50px;
-}
-</style>
+<style type="text/css" id="range-styles"></style>
 
 <script type="module" src="./js/main.js"></script>
 
