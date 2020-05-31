@@ -66,8 +66,8 @@ class JobsPlotter {
           const { job, rangeCounter } = this.domComposer.jobModel.jobRanges[i]
           const { beginTimestamp, endTimestamp } = this.domComposer.jobModel.jobRecords.get(job).ranges[rangeCounter]
 
-          rangesAS.push({ index: i, time: beginTimestamp })
-          rangesAS.push({ index: i, time: endTimestamp })
+          this.rangesAS.push({ index: i, time: beginTimestamp })
+          this.rangesAS.push({ index: i, time: endTimestamp })
       }
   }
     //maybe we should use somthing like http://pixijs.download/release/docs/index.html to increase performance
