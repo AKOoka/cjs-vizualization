@@ -1,4 +1,5 @@
 body {
+  margin: 0;
   padding: 100px;
 }
 
@@ -43,22 +44,44 @@ body {
 }
 
 .range {
-    display: flex; /*see: https://developers.google.com/web/fundamentals/performance/rendering/avoid-large-complex-layouts-and-layout-thrashing?utm_source=devtools#avoid-forced-synchronous-layouts */
-    position: absolute;
-    background-color: red;
-    /*display: inline-block;*/
-    height: 50px;
+  display: flex; /*see: https://developers.google.com/web/fundamentals/performance/rendering/avoid-large-complex-layouts-and-layout-thrashing?utm_source=devtools#avoid-forced-synchronous-layouts */
+  position: absolute;
+  background-color: red;
+  /*display: inline-block;*/
+  height: 50px;
 }
 
 .selected {
   border: 2px solid blue;
 }
 
-/*.processor-line {
-  height: 50px;
-  border: 1px solid;
-  position: relative;
-}*/
+.plotter-menu {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  width: 200px;
+  height: 200px;
+  background-color: coral;
+}
+
+.plotter-menu__option {
+  flex: 100px 2 2;
+  padding: 0;
+  border: none;
+}
+
+.plotter-menu__option:hover {
+  background-color: cornflowerblue;
+}
+
+.plotter-menu__option:active {
+  text-decoration: none;
+}
+
+button::-moz-focus-inner {
+  border: none;
+}
 
 #slider {
   margin-top: 50px;

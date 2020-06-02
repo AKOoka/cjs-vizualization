@@ -14,7 +14,8 @@ async function onFileInput (event) {
 
   model = JobsDataModel.fromParseData(parseData(json))
 
-  jobsPlotter.setDOMComposer(JobsDOMComposer.composeFrom(model))
+  jobsPlotter.setModel(model)
+  jobsPlotter.setDOMComposer(new JobsDOMComposer(model))
 
   console.log(model)
 }
