@@ -17,6 +17,7 @@ class JobsDOMComposer {
       rangeDiv.classList.add('range')
       rangeDiv.classList.add(`range-${rangeCounter}`)
       rangeDiv.textContent = name
+      rangeDiv.title = name
       rangeDiv.style.left = `${beginTimestamp}px`
       rangeDiv.style.width = `${endTimestamp - beginTimestamp}px`
 

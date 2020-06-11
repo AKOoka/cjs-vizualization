@@ -19,6 +19,8 @@ function readJobRegProfileData (storage, data) {
 function readRangeData (jobsMap, processorsMap, data) {
   const openRange = new Set()
 
+  // it should be sorted before going through
+
   data.forEach(({ job, processorId, timestamp }) => {
     const jobRanges = jobsMap.get(job).ranges
     const rangeCounter = jobRanges.length
@@ -123,7 +125,7 @@ function parseData ({
     endTime: rangeBeginEndEventProfileData[rangeBeginEndEventProfileData.length - 1].timestamp,
     timeUnit: 'ms'
   }
-  const processorsMap = [] // maybe do it like an array and in jobsMap in range save processorId
+  const processorsMap = []
   const jobsMap = new Map()
   const spawnedJobsMap = new Map()
   const atomicCountersMap = new Map()

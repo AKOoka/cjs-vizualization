@@ -2,6 +2,9 @@ import { parseData } from './parsing.js'
 import { JobsDataModel } from './JobsDataModel.js'
 import { JobsDOMComposer } from './JobsDOMComposer.js'
 import { jobsPlotter } from './JobsPlotter.js'
+import { ViewRange } from './ViewRange.js'
+import { Slider } from './Slider.js'
+import { MouseWheelController } from './MouseWheelController.js'
 
 let model = null
 
@@ -16,14 +19,25 @@ async function onFileInput (event) {
 
   jobsPlotter.setModel(model)
   jobsPlotter.setDOMComposer(new JobsDOMComposer(model))
+  jobsPlotter.updateRange({ start: jobsPlotter.viewRange.start, end: jobsPlotter.viewRange.end })
 
   console.log(model)
 }
 
+const viewRange = new ViewRange()
+const slider = new Slider(viewRange, 5, 0.15)
+const mouseWheelController = new MouseWheelController()
+
+viewRange.subscribe(jobsPlotter)
+viewRange.subscribe(slider)
+viewRange.subscribe(mouseWheelController)
+
+Slider.createSliderDOM(document.querySelector('#slider'), slider)
+
 jobsPlotter.setContext({
-  domRoot: document.querySelector('#jobPlotter'),
-  styleData: document.querySelector('#range-styles')
+  domRoot: document.querySelector('#job-plotter'),
 })
+jobsPlotter.setViewRange(viewRange)
 
 document.querySelector('#user-json').onchange = onFileInput
 
@@ -33,5 +47,5 @@ document.querySelector('#change-range').onclick = () => {
   const start = document.querySelector('#start-range').value
   const end = document.querySelector('#end-range').value
 
-  jobsPlotter.moveRangeTo({ start, end })
+  jobsPlotter.updateRange({ start, end })
 }

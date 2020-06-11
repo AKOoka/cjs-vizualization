@@ -1,108 +1,74 @@
-class SliderChangeIntreface {
-  update (event) {}
-}
+// class SliderChangeIntreface {
+//   update (event) {}
+// }
 
-class SliderChangeListener extends SliderChangeIntreface {
-  update (zoomEvent) {
-    super.update(zoomEvent)
+// class SliderChangeListener extends SliderChangeIntreface {
+//   update (zoomEvent) {
+//     super.update(zoomEvent)
 
-    for (const processor of graphContainer.children) {
-      processor.replaceWith(processor.cloneNode(false))
-    }
+//     for (const processor of graphContainer.children) {
+//       processor.replaceWith(processor.cloneNode(false))
+//     }
 
-    const { meta, jobsMap, processorsMap } = userData
-    const sliderStart = scalePosition(slider.zoomStart, sliderContainer.offsetWidth, graphWidth) + meta.startingPoint
-    const sliderEnd = scalePosition(slider.zoomEnd, sliderContainer.offsetWidth, graphWidth) + meta.startingPoint
+//     const { meta, jobsMap, processorsMap } = userData
+//     const sliderStart = scalePosition(slider.zoomStart, sliderContainer.offsetWidth, graphWidth) + meta.startingPoint
+//     const sliderEnd = scalePosition(slider.zoomEnd, sliderContainer.offsetWidth, graphWidth) + meta.startingPoint
 
-    drawGraph(graphContainer, processorsMap, getGraphZoom(jobsMap, processorsMap, sliderStart, sliderEnd, sliderContainer.offsetWidth))
-  }
-}
+//     drawGraph(graphContainer, processorsMap, getGraphZoom(jobsMap, processorsMap, sliderStart, sliderEnd, sliderContainer.offsetWidth))
+//   }
+// }
 
 class Slider {
-  constructor (graphWidth, anchorWidth, zoomVelocity, zoomStart, zoomEnd) {
-    this.subscribers = []
-
-    this.graphWidth = graphWidth
-    this.sliderWidth = 0
-    this.mapToGraphRation = graphWidth
-
+  constructor (viewRange, anchorWidth, anchorVelocity) {
     this.anchorWidth = anchorWidth
     this.anchorHalfWidth = Math.round(anchorWidth / 2)
 
-    this.zoomVelocity = zoomVelocity
+    this.anchorVelocity = anchorVelocity
 
-    this.zoomStart = zoomStart
-    this.zoomEnd = zoomEnd
+    this.viewRange = viewRange
 
     this.container = null
     this.startAnchor = null
     this.centerAnchor = null
     this.endAnchor = null
-    this.sliderBackground = null
 
-    this.anime = false
     this.dragged = null
-    this.target = 0
   }
 
-  triggerSliderChangeEvent (zoomEvent) {
-    this.subscribers.forEach(sub => {
-      sub.update(zoomEvent)
-    })
+  updateRange () {
   }
 
-  subscribe (subscriber) {
-    this.subscribers.push(subscriber)
-  }
+  moveRangeTo (target) {
+    let startPos = parseInt(this.startAnchor.style.left)
+    let endPos = parseInt(this.endAnchor.style.left)
 
-  update () {
-    if (!this.anime) {
-      return
-    }
+    const selectorWidth = endPos - startPos
+    const halfSelectorWidth = selectorWidth / 2
 
-    const startPos = parseInt(this.startAnchor.style.left)
-    const endPos = parseInt(this.endAnchor.style.left)
-
-    let newStart = startPos
-    let newEnd = endPos
-
-    const selectorWidth = (endPos - startPos) / 2
-
-    if (this.dragged.id === 'start-slider') {
-      newStart += (this.target - startPos) * this.zoomVelocity
-    } else if (this.dragged.id === 'end-slider') {
-      newEnd += (this.target - endPos) * this.zoomVelocity
+    if (this.dragged === 'start-slider') {
+      startPos = Math.max(0, Math.min(target, endPos - this.anchorHalfWidth))
+    } else if (this.dragged === 'end-slider') {
+      endPos = Math.min(this.container.offsetWidth, Math.max(target, startPos + this.anchorHalfWidth))
     } else {
-      if (this.target - selectorWidth < 0) {
-        newStart += (-this.anchorHalfWidth - startPos) * this.zoomVelocity
-
-        newEnd += (-this.anchoHalfWidth + selectorWidth * 2 - endPos) * this.zoomVelocity
-      } else if (this.target + selectorWidth > this.container.offsetWidth) {
-        newStart += (this.anchorHalfWidth + this.container.offsetWidth - selectorWidth * 2 - startPos) * this.zoomVelocity
-
-        newEnd += (this.anchorHalfWidth + this.container.offsetWidth - endPos) * this.zoomVelocity
+      if (target - halfSelectorWidth < 0) {
+        startPos = 0
+        endPos = selectorWidth
+      } else if (target + halfSelectorWidth > this.container.offsetWidth) {
+        startPos = this.container.offsetWidth - selectorWidth
+        endPos = this.container.offsetWidth
       } else {
-        newStart += (this.target - selectorWidth - startPos) * this.zoomVelocity
-
-        newEnd += (this.target + selectorWidth - endPos) * this.zoomVelocity
+        startPos = target - halfSelectorWidth
+        endPos = target + halfSelectorWidth
       }
     }
 
-    newStart = Math.round(newStart)
-    newEnd = Math.round(newEnd)
-
-    this.startAnchor.style.left = `${newStart}px`
-    this.endAnchor.style.left = `${newEnd}px`
+    this.startAnchor.style.left = `${startPos}px`
+    this.endAnchor.style.left = `${endPos}px`
 
     this.centerAnchor.style.left = this.startAnchor.style.left
-    this.centerAnchor.style.right = `${this.container.offsetWidth - newEnd}px`
+    this.centerAnchor.style.right = `${this.container.offsetWidth - endPos}px`
 
-    this.zoomStart = this.mapToGraphRation * newStart
-    this.zoomEnd = this.mapToGraphRation * newEnd
-
-    this.triggerSliderChangeEvent({ zoomStart: this.zoomStart, zoomEnd: this.zoomEnd })
-
-    // requestAnimationFrame(this.update())
+    this.viewRange.setRange(startPos / this.container.offsetWidth, endPos / this.container.offsetWidth)
   }
 
   static createSliderAnchorDOM (slider, anchorName, anchorWidth, anchorPosition, onMousedown) {
@@ -133,20 +99,12 @@ class Slider {
     return sliderCenterDiv
   }
 
-  static createSliderDOM (sliderContainer, slider, eventListeners) {
-    const { onMousedown, onMousemove, onMouseup } = eventListeners
-
-    const sliderBackground = document.createElement('div')
-
-    sliderBackground.id = 'slider-background'
-
+  static createSliderDOM (sliderContainer, slider) {
     slider.container = sliderContainer
-    slider.sliderBackground = sliderBackground
     slider.startAnchor = Slider.createSliderAnchorDOM(slider, 'start', slider.anchorWidth, 0, onMousedown)
     slider.endAnchor = Slider.createSliderAnchorDOM(slider, 'end', slider.anchorWidth, slider.container.offsetWidth, onMousedown)
     slider.centerAnchor = Slider.createSliderMiddleAreaDOM(slider, 0, 0, onMousedown)
 
-    slider.container.append(slider.sliderBackground)
     slider.container.append(slider.startAnchor)
     slider.container.append(slider.centerAnchor)
     slider.container.append(slider.endAnchor)
@@ -159,61 +117,24 @@ class Slider {
   }
 }
 
-const sliderEventListeners = {
-  onMousedown,
-  onMousemove,
-  onMouseup
-}
-
 function onMousedown (event, slider) {
-  slider.anime = true
-  slider.dragged = event.target
-
-  slider.update()
-
-  // console.log('onMousedown')
+  slider.dragged = event.target.id
 }
 
 function onMousemove (event, slider) {
-  if (!slider.anime) {
+  if (!slider.dragged) {
     return
   }
 
-  const {
-    startAnchor,
-    endAnchor,
-    container,
-    anchorHalfWidth,
-    dragged
-  } = slider
+  const target = event.clientX - slider.container.offsetLeft
 
-  const startPosition = parseInt(startAnchor.style.left)
-  const endPosition = parseInt(endAnchor.style.left)
-
-  slider.target = event.clientX - container.offsetLeft
-
-  if (dragged.id === 'start-slider' && slider.target > endPosition) {
-    slider.target = endPosition
-  } else if (dragged.id === 'end-slider' && slider.target < startPosition) {
-    slider.target = startPosition
-  } else if (slider.target <= 0) {
-    slider.target = 0
-  } else if (slider.target >= container.offsetWidth) {
-    slider.target = container.offsetWidth - anchorHalfWidth
-  }
-
-  console.log(event.mouseLeft)
-
-  slider.update()
-
-  // console.log('onMousemove')
+  slider.moveRangeTo(target)
 }
 
 function onMouseup (slider) {
   slider.dragged = null
-  slider.anime = false
 
-  // console.log('onMouseup')
+  // slider.moveRangeTo()
 }
 
-export { sliderEventListeners, Slider, SliderChangeListener }
+export { Slider }
