@@ -136,8 +136,12 @@ class Slider {
     this.sliderWidth = slider.offsetWidth
     this.mapToGraphRation = this.sliderWidth / this.graphWidth
 
-    document.addEventListener('mousemove', event => { onMousemove(event, slider) })
-    document.addEventListener('mouseup', event => { onMouseup(event, slider) })
+    document.addEventListener('mousemove', event => {
+      onMousemove(event, slider)
+    })
+    document.addEventListener('mouseup', event => {
+      onMouseup(event, slider)
+    })
   }
 }
 

@@ -45,12 +45,14 @@ body {
 
 .range {
   position: absolute;
-  background-color: red;
   height: 50px;
   box-sizing: border-box;
   border: 1px solid rgb(218, 57, 164);
+  background-color: red;
   overflow: hidden;
   text-overflow: ellipsis;
+  cursor: pointer;
+  user-select: none;
 }
 
 .selected {
@@ -120,6 +122,6 @@ button::-moz-focus-inner {
   position: relative;
 }
 
-.hidden {
-  display: none;
+.hiddeText {
+  color: transparent;
 }

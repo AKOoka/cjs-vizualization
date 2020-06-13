@@ -11,10 +11,10 @@ class JobsDOMComposer {
       const { beginTimestamp, endTimestamp, processorId } = ranges[rangeCounter]
 
       const rangeDiv = document.createElement('div')
-      const rangeText = document.createElement('span')
+      // const rangeText = document.createElement('span')
       const rangeWidth = endTimestamp - beginTimestamp
 
-      rangeText.textContent = name
+      rangeDiv.textContent = name
 
       rangeDiv.classList.add(`processor-${processorId}`)
       rangeDiv.classList.add(`job-${job}`)
@@ -25,10 +25,10 @@ class JobsDOMComposer {
       rangeDiv.style.width = `${rangeWidth}px`
 
       if (rangeWidth <= 40) {
-        rangeText.classList.add('hidden')
+        rangeDiv.classList.add('hiddeText')
       }
 
-      rangeDiv.append(rangeText)
+      // rangeDiv.append(rangeText)
 
       this.jobsDOMModel.push(rangeDiv)
     }

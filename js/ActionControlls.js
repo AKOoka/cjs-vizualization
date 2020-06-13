@@ -17,9 +17,18 @@ class ActionControlls {
 
   setActionControlls (domRoot) {
     this.contextualMenu.createMenuDOM({
-      showJobRangesListener: this.showJobRangesListener,
-      showJobSpawnsListener: this.showJobSpawnsListener,
-      showAtomicCounterListener: this.showAtomicCounterListener
+      showJobRangesListener: () => {
+        this.showJobRangesListener(this.stylesheetManager)
+      },
+      showJobSpawnsListener: () => {
+        this.showJobSpawnsListener(this.stylesheetManager)
+      },
+      showAtomicCounterListener: () => {
+        this.showAtomicCounterListener(this.stylesheetManager)
+      },
+      hideDependencesListener: () => {
+        this.hideDependencesListener(this.stylesheetManager)
+      }
     })
 
     const { deselectJob, selectJob, deselectAllJobs } = this.jobSelector
@@ -47,22 +56,35 @@ class ActionControlls {
     }
   }
 
-  showJobRangesListener () {
+  showJobRangesListener (stylesheetManager) {
     console.log('showJobRangesListener')
     this.selectedJobs.forEach(jobId => {
-      this.stylesheetManager.changeStyleForJobRanges(jobId)
+      stylesheetManager.changeStyleForJobRanges(jobId)
     })
+
+    this.contextualMenu.hideMenu()
   }
 
-  showJobSpawnsListener () {
+  showJobSpawnsListener (stylesheetManager) {
     console.log('showJobSpawnsListener')
     this.selectedJobs.forEach(jobId => {
-      this.stylesheetManager.changeStyleForJobSpawns(jobId)
+      stylesheetManager.changeStyleForJobSpawns(jobId)
     })
+
+    this.contextualMenu.hideMenu()
   }
 
-  showAtomicCounterListener (acId) {
+  showAtomicCounterListener (stylesheetManager) {
 
+  }
+
+  hideDependencesListener (stylesheetManager) {
+    console.log('showJobSpawnsListener')
+    this.selectedJobs.forEach(jobId => {
+      stylesheetManager.removeStyleOfJob(jobId)
+    })
+
+    this.contextualMenu.hideMenu()
   }
 }
 

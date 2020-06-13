@@ -119,9 +119,9 @@ class JobsPlotter {
       range.style.width = Math.max(1, divWidth) + 'px'
 
       if (divWidth <= 40) {
-        range.children[0].classList.add('hidden')
+        range.classList.add('hiddeText')
       } else {
-        range.children[0].classList.remove('hidden')
+        range.classList.remove('hiddeText')
       }
     })
   }
