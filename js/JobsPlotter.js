@@ -73,13 +73,17 @@ class JobsPlotter {
   }
 
   // maybe we should use somthing like http://pixijs.download/release/docs/index.html to increase performance
-  updateRange ({ start, end }) {
+  updateRange () {
+    if (!this.model) {
+      return
+    }
+
     const min = this.model.meta.startTime
     const max = this.model.meta.endTime
     const width = max - min
 
-    const startPos = start * width + min
-    const endPos = end * width + min
+    const startPos = this.viewRange.start * width + min
+    const endPos = this.viewRange.end * width + min
 
     const visible = this.rangesAS.filter(({ index, time }) => time >= startPos && time <= endPos)
     const allNewVisibleRanges = []
@@ -99,9 +103,9 @@ class JobsPlotter {
       this.context.domRoot.append(this.jobsDOMComposer.jobsDOMModel[index])
     })
 
-    const scaleFactor = 1 / (end - start)
+    const scaleFactor = 1 / (this.viewRange.end - this.viewRange.start)
     const scaleWidthFactor = 1 / (width) * scaleFactor * this.context.domRoot.offsetWidth
-    const translateFactor = start * scaleFactor * this.context.domRoot.offsetWidth
+    const translateFactor = this.viewRange.start * scaleFactor * this.context.domRoot.offsetWidth
 
     this.visibleRanges.forEach(index => {
       const range = this.jobsDOMComposer.jobsDOMModel[index]
@@ -110,8 +114,15 @@ class JobsPlotter {
 
       const divWidth = (endTimestamp - beginTimestamp) * scaleWidthFactor
       const pos = (beginTimestamp - min) * scaleWidthFactor - translateFactor
+
       range.style.left = pos + 'px'
       range.style.width = Math.max(1, divWidth) + 'px'
+
+      if (divWidth <= 40) {
+        range.children[0].classList.add('hidden')
+      } else {
+        range.children[0].classList.remove('hidden')
+      }
     })
   }
 }

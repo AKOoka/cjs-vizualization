@@ -35,12 +35,11 @@ class Slider {
     this.dragged = null
   }
 
-  updateRange () {
-  }
-
-  moveRangeTo (target) {
+  getSliderPosition (target) {
     let startPos = parseInt(this.startAnchor.style.left)
     let endPos = parseInt(this.endAnchor.style.left)
+
+    // can add feature that will detect in wich part of slider centerAnchor was slider dragged by mouse
 
     const selectorWidth = endPos - startPos
     const halfSelectorWidth = selectorWidth / 2
@@ -62,13 +61,38 @@ class Slider {
       }
     }
 
+    return { startPos, endPos }
+  }
+
+  updateRange (start, end, eventTrigger) {
+    // need to rethink observer patern because only slider needs to change something exept viewRange.start and veiwRange.end
+    if (eventTrigger === this) {
+      return
+    }
+
+    this.changeSliderPosition(start, end)
+  }
+
+  changeSliderPosition (startPos, endPos) {
     this.startAnchor.style.left = `${startPos}px`
     this.endAnchor.style.left = `${endPos}px`
 
     this.centerAnchor.style.left = this.startAnchor.style.left
-    this.centerAnchor.style.right = `${this.container.offsetWidth - endPos}px`
+    this.centerAnchor.style.width = `${endPos - startPos}px`
+  }
 
-    this.viewRange.setRange(startPos / this.container.offsetWidth, endPos / this.container.offsetWidth)
+  moveSliderTo (target) {
+    const { startPos, endPos } = this.getSliderPosition(target)
+
+    this.changeSliderPosition(startPos, endPos)
+  }
+
+  moveRangeTo (target) {
+    const { startPos, endPos } = this.getSliderPosition(target)
+
+    this.changeSliderPosition(startPos, endPos)
+
+    this.viewRange.setRange(startPos / this.container.offsetWidth, endPos / this.container.offsetWidth, this)
   }
 
   static createSliderAnchorDOM (slider, anchorName, anchorWidth, anchorPosition, onMousedown) {
@@ -113,7 +137,7 @@ class Slider {
     this.mapToGraphRation = this.sliderWidth / this.graphWidth
 
     document.addEventListener('mousemove', event => { onMousemove(event, slider) })
-    document.addEventListener('mouseup', () => { onMouseup(slider) })
+    document.addEventListener('mouseup', event => { onMouseup(event, slider) })
   }
 }
 
@@ -128,13 +152,17 @@ function onMousemove (event, slider) {
 
   const target = event.clientX - slider.container.offsetLeft
 
-  slider.moveRangeTo(target)
+  slider.moveSliderTo(target)
 }
 
-function onMouseup (slider) {
-  slider.dragged = null
+function onMouseup (event, slider) {
+  if (slider.dragged) {
+    const target = event.clientX - slider.container.offsetLeft
 
-  // slider.moveRangeTo()
+    slider.moveRangeTo(target)
+
+    slider.dragged = null
+  }
 }
 
 export { Slider }

@@ -9,16 +9,12 @@ class ViewRange {
     this.subscribers.push(sub)
   }
 
-  setRange (start, end) {
+  setRange (start, end, eventTrigger) {
     this.start = start
     this.end = end
 
-    this.triggerViewRangeEvent(start, end)
-  }
-
-  triggerViewRangeEvent (start, end) {
     this.subscribers.forEach(sub => {
-      sub.updateRange({ start, end })
+      sub.updateRange(start, end, eventTrigger)
     })
   }
 }

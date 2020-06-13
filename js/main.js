@@ -19,7 +19,7 @@ async function onFileInput (event) {
 
   jobsPlotter.setModel(model)
   jobsPlotter.setDOMComposer(new JobsDOMComposer(model))
-  jobsPlotter.updateRange({ start: jobsPlotter.viewRange.start, end: jobsPlotter.viewRange.end })
+  jobsPlotter.updateRange()
 
   console.log(model)
 }
@@ -35,7 +35,7 @@ viewRange.subscribe(mouseWheelController)
 Slider.createSliderDOM(document.querySelector('#slider'), slider)
 
 jobsPlotter.setContext({
-  domRoot: document.querySelector('#job-plotter'),
+  domRoot: document.querySelector('#job-plotter')
 })
 jobsPlotter.setViewRange(viewRange)
 
