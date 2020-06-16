@@ -33,6 +33,7 @@ class Slider {
     this.endAnchor = null
 
     this.dragged = null
+    this.lastTarget = 0
   }
 
   getSliderPosition (target) {
@@ -40,27 +41,23 @@ class Slider {
     let endPos = parseInt(this.endAnchor.style.left)
 
     // can add feature that will detect in wich part of slider centerAnchor was slider dragged by mouse
-
     const selectorWidth = endPos - startPos
-    const halfSelectorWidth = selectorWidth / 2
 
     if (this.dragged === 'start-slider') {
       startPos = Math.max(0, Math.min(target, endPos - this.anchorHalfWidth))
     } else if (this.dragged === 'end-slider') {
       endPos = Math.min(this.container.offsetWidth, Math.max(target, startPos + this.anchorHalfWidth))
     } else {
-      if (target - halfSelectorWidth < 0) {
-        startPos = 0
-        endPos = selectorWidth
-      } else if (target + halfSelectorWidth > this.container.offsetWidth) {
-        startPos = this.container.offsetWidth - selectorWidth
-        endPos = this.container.offsetWidth
-      } else {
-        startPos = target - halfSelectorWidth
-        endPos = target + halfSelectorWidth
+      let moveVelocity = target - this.lastTarget;
+      if (startPos + moveVelocity < 0) {
+        moveVelocity = -startPos
+      } else if (endPos + moveVelocity > this.container.offsetWidth) {
+        moveVelocity = this.container.offsetWidth - endPos
       }
+      startPos += moveVelocity
+      endPos += moveVelocity
     }
-
+    
     return { startPos, endPos }
   }
 
@@ -70,10 +67,10 @@ class Slider {
       return
     }
 
-    this.changeSliderPosition(start, end)
+    this.drawSlider(start, end)
   }
 
-  changeSliderPosition (startPos, endPos) {
+  drawSlider(startPos, endPos) {
     this.startAnchor.style.left = `${startPos}px`
     this.endAnchor.style.left = `${endPos}px`
 
@@ -84,13 +81,13 @@ class Slider {
   moveSliderTo (target) {
     const { startPos, endPos } = this.getSliderPosition(target)
 
-    this.changeSliderPosition(startPos, endPos)
+    this.drawSlider(startPos, endPos)
   }
 
   moveRangeTo (target) {
     const { startPos, endPos } = this.getSliderPosition(target)
 
-    this.changeSliderPosition(startPos, endPos)
+    this.drawSlider(startPos, endPos)
 
     this.viewRange.setRange(startPos / this.container.offsetWidth, endPos / this.container.offsetWidth, this)
   }
@@ -150,13 +147,12 @@ function onMousedown (event, slider) {
 }
 
 function onMousemove (event, slider) {
-  if (!slider.dragged) {
-    return
-  }
-
   const target = event.clientX - slider.container.offsetLeft
-
-  slider.moveSliderTo(target)
+  if (slider.dragged) {
+    //slider.moveSliderTo(target)
+    slider.moveRangeTo(target)
+  }
+  slider.lastTarget = target
 }
 
 function onMouseup (event, slider) {
@@ -164,7 +160,6 @@ function onMouseup (event, slider) {
     const target = event.clientX - slider.container.offsetLeft
 
     slider.moveRangeTo(target)
-
     slider.dragged = null
   }
 }
