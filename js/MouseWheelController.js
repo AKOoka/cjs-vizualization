@@ -4,23 +4,17 @@ class MouseWheelController {
     this.viewRange = viewRange
   }
 
-  zoom (pivot, zoomDirection) {
+  zoom (relMouseX, zoomDirection) {
     console.log('Out')
     const { domRoot } = this.context
 
-    const point = pivot / domRoot.offsetWidth
     const rangeWidth = this.viewRange.end - this.viewRange.start
     const invRangeWidth = 1 / rangeWidth
-
-    const dx1 = point - this.viewRange.start
-    const dx2 = this.viewRange.end - point
-    const dx1Ratio = dx1 * invRangeWidth
-    const dx2Raito = dx2 * invRangeWidth
-
+    const pivot = relMouseX / domRoot.offsetWidth
     const zoomVelocity = 0.1 * rangeWidth
 
-    const startPos = Math.max(0, this.viewRange.start + zoomDirection * zoomVelocity * dx1Ratio * -1)
-    const endPos = Math.min(1, this.viewRange.end + zoomDirection * zoomVelocity * dx2Raito)
+    const startPos = Math.max(0, this.viewRange.start + zoomDirection * zoomVelocity * pivot * -1)
+    const endPos = Math.min(1, this.viewRange.end + zoomDirection * zoomVelocity * (1 - pivot))
 
     return { startPos, endPos }
   }
