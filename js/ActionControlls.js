@@ -8,6 +8,7 @@ function getIndex (div) {
 
 class ActionControlls {
   constructor () {
+    this.model = null
     this.selectedJobs = new Set()
     this.selectedJobDOMElements = new Set()
     this.contextualMenu = new ContextualMenu()
@@ -15,22 +16,7 @@ class ActionControlls {
     this.stylesheetManager = new StylesheetManager()
   }
 
-  setActionControlls (domRoot) {
-    this.contextualMenu.createMenuDOM({
-      showJobRangesListener: () => {
-        this.showJobRangesListener(this.stylesheetManager)
-      },
-      showJobSpawnsListener: () => {
-        this.showJobSpawnsListener(this.stylesheetManager)
-      },
-      showAtomicCounterListener: () => {
-        this.showAtomicCounterListener(this.stylesheetManager)
-      },
-      hideDependencesListener: () => {
-        this.hideDependencesListener(this.stylesheetManager)
-      }
-    })
-
+  setContext (domRoot) {
     const { deselectJob, selectJob, deselectAllJobs } = this.jobSelector
 
     domRoot.oncontextmenu = event => {
@@ -56,19 +42,41 @@ class ActionControlls {
     }
   }
 
+  setModel (model) {
+    this.contextualMenu.createMenuDOM({
+      showJobRangesListener: () => {
+        this.showJobRangesListener(this.stylesheetManager)
+      },
+      showJobSpawnsListener: () => {
+        this.showJobSpawnsListener(this.stylesheetManager, model)
+      },
+      showAtomicCounterListener: () => {
+        this.showAtomicCounterListener(this.stylesheetManager, model)
+      },
+      hideDependencesListener: () => {
+        this.hideDependencesListener(this.stylesheetManager)
+      }
+    })
+  }
+
   showJobRangesListener (stylesheetManager) {
     console.log('showJobRangesListener')
     this.selectedJobs.forEach(jobId => {
-      stylesheetManager.changeStyleForJobRanges(jobId)
+      stylesheetManager.changeStyleForJob(jobId)
     })
 
     this.contextualMenu.hideMenu()
   }
 
-  showJobSpawnsListener (stylesheetManager) {
+  showJobSpawnsListener (stylesheetManager, model) {
     console.log('showJobSpawnsListener')
+
     this.selectedJobs.forEach(jobId => {
-      stylesheetManager.changeStyleForJobSpawns(jobId)
+      model.spawnedJobs.get(parseInt(jobId, 10)).forEach(spawnedJobs => {
+        spawnedJobs.jobs.forEach(job => {
+          stylesheetManager.changeStyleForJob(job)
+        })
+      })
     })
 
     this.contextualMenu.hideMenu()

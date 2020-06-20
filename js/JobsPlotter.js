@@ -15,13 +15,14 @@ class JobsPlotter {
   setContext (context) {
     this.context = context
 
-    this.actionCotrolls.setActionControlls(this.context.domRoot)
+    this.actionCotrolls.setContext(this.context.domRoot)
   }
 
   setModel (model) {
     this.model = model
 
     this.jobsDOMComposer.createDOMModel(model)
+    this.actionCotrolls.setModel(model)
   }
 
   setViewRange (viewRange) {

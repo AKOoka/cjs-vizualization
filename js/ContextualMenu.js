@@ -29,9 +29,9 @@ class ContextualMenu {
     menuDOM.classList.add('plotter-menu')
 
     const showJobRangesButton = this.createMenuOptionDOM('Select Job', showJobRangesListener)
-    const showJobSpawnsButton = this.createMenuOptionDOM('Show job spawns', showJobSpawnsListener)
-    const showAtomicCounterButton = this.createMenuOptionDOM('Show atomic counters', showAtomicCounterListener)
-    const hideDependencesButton = this.createMenuOptionDOM('Hide job dependences', hideDependencesListener)
+    const showJobSpawnsButton = this.createMenuOptionDOM('Show Job Spawns', showJobSpawnsListener)
+    const showAtomicCounterButton = this.createMenuOptionDOM('Show Atomic Counters', showAtomicCounterListener)
+    const hideDependencesButton = this.createMenuOptionDOM('Hide Job Dependences', hideDependencesListener)
 
     menuDOM.append(showJobRangesButton)
     menuDOM.append(showJobSpawnsButton)

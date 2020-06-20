@@ -3,12 +3,7 @@ class StylesheetManager {
     this.stylesheet = document.querySelector('#range-styles')
   }
 
-  changeStyleForJobRanges (jobId) {
-    this.stylesheet.sheet.insertRule(`.job-${jobId}.range { background-color: green; }`, 0)
-    console.log(this.stylesheet.sheet)
-  }
-
-  changeStyleForJobSpawns (jobId) {
+  changeStyleForJob (jobId) {
     this.stylesheet.sheet.insertRule(`.job-${jobId}.range { background-color: green; }`, 0)
     console.log(this.stylesheet.sheet)
   }
