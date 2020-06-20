@@ -22,8 +22,6 @@ class MouseWheelController {
     const startPos = Math.max(0, this.viewRange.start + zoomDirection * zoomVelocity * dx1Ratio * -1)
     const endPos = Math.min(1, this.viewRange.end + zoomDirection * zoomVelocity * dx2Raito)
 
-    console.log(startPos, endPos)
-
     return { startPos, endPos }
   }
 

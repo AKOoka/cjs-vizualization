@@ -48,7 +48,7 @@ class Slider {
       return
     }
 
-    this.drawSlider(start, end)
+    this.drawSlider(start * this.container.offsetWidth, end * this.container.offsetWidth)
   }
 
   drawSlider (startPos, endPos) {
