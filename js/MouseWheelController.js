@@ -9,7 +9,6 @@ class MouseWheelController {
     const { domRoot } = this.context
 
     const rangeWidth = this.viewRange.end - this.viewRange.start
-    const invRangeWidth = 1 / rangeWidth
     const pivot = relMouseX / domRoot.offsetWidth
     const zoomVelocity = 0.1 * rangeWidth
 
