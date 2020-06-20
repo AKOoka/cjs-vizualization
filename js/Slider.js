@@ -1,23 +1,3 @@
-// class SliderChangeIntreface {
-//   update (event) {}
-// }
-
-// class SliderChangeListener extends SliderChangeIntreface {
-//   update (zoomEvent) {
-//     super.update(zoomEvent)
-
-//     for (const processor of graphContainer.children) {
-//       processor.replaceWith(processor.cloneNode(false))
-//     }
-
-//     const { meta, jobsMap, processorsMap } = userData
-//     const sliderStart = scalePosition(slider.zoomStart, sliderContainer.offsetWidth, graphWidth) + meta.startingPoint
-//     const sliderEnd = scalePosition(slider.zoomEnd, sliderContainer.offsetWidth, graphWidth) + meta.startingPoint
-
-//     drawGraph(graphContainer, processorsMap, getGraphZoom(jobsMap, processorsMap, sliderStart, sliderEnd, sliderContainer.offsetWidth))
-//   }
-// }
-
 class Slider {
   constructor (viewRange, anchorWidth, anchorVelocity) {
     this.anchorWidth = anchorWidth
@@ -37,27 +17,28 @@ class Slider {
   }
 
   getSliderPosition (target) {
+    // this function CHANGE slider position, NOT GET slider position
+
     let startPos = parseInt(this.startAnchor.style.left)
     let endPos = parseInt(this.endAnchor.style.left)
-
-    // can add feature that will detect in wich part of slider centerAnchor was slider dragged by mouse
-    const selectorWidth = endPos - startPos
 
     if (this.dragged === 'start-slider') {
       startPos = Math.max(0, Math.min(target, endPos - this.anchorHalfWidth))
     } else if (this.dragged === 'end-slider') {
       endPos = Math.min(this.container.offsetWidth, Math.max(target, startPos + this.anchorHalfWidth))
     } else {
-      let moveVelocity = target - this.lastTarget;
+      let moveVelocity = target - this.lastTarget
+
       if (startPos + moveVelocity < 0) {
         moveVelocity = -startPos
       } else if (endPos + moveVelocity > this.container.offsetWidth) {
         moveVelocity = this.container.offsetWidth - endPos
       }
+
       startPos += moveVelocity
       endPos += moveVelocity
     }
-    
+
     return { startPos, endPos }
   }
 
@@ -70,7 +51,7 @@ class Slider {
     this.drawSlider(start, end)
   }
 
-  drawSlider(startPos, endPos) {
+  drawSlider (startPos, endPos) {
     this.startAnchor.style.left = `${startPos}px`
     this.endAnchor.style.left = `${endPos}px`
 
@@ -78,11 +59,11 @@ class Slider {
     this.centerAnchor.style.width = `${endPos - startPos}px`
   }
 
-  moveSliderTo (target) {
-    const { startPos, endPos } = this.getSliderPosition(target)
+  // moveSliderTo (target) {
+  //   const { startPos, endPos } = this.getSliderPosition(target)
 
-    this.drawSlider(startPos, endPos)
-  }
+  //   this.drawSlider(startPos, endPos)
+  // }
 
   moveRangeTo (target) {
     const { startPos, endPos } = this.getSliderPosition(target)
@@ -148,10 +129,12 @@ function onMousedown (event, slider) {
 
 function onMousemove (event, slider) {
   const target = event.clientX - slider.container.offsetLeft
+
   if (slider.dragged) {
-    //slider.moveSliderTo(target)
+    // slider.moveSliderTo(target)
     slider.moveRangeTo(target)
   }
+
   slider.lastTarget = target
 }
 

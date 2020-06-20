@@ -6,8 +6,6 @@ import { ViewRange } from './ViewRange.js'
 import { Slider } from './Slider.js'
 import { MouseWheelController } from './MouseWheelController.js'
 
-let model = null
-
 async function onFileInput (event) {
   const file = event.target.files[0]
   const text = await file.text()
@@ -24,9 +22,11 @@ async function onFileInput (event) {
   console.log(model)
 }
 
+let model = null
+
 const viewRange = new ViewRange()
 const slider = new Slider(viewRange, 5, 0.15)
-const mouseWheelController = new MouseWheelController()
+const mouseWheelController = new MouseWheelController(viewRange)
 
 viewRange.subscribe(jobsPlotter)
 viewRange.subscribe(slider)
@@ -39,9 +39,9 @@ jobsPlotter.setContext({
 })
 jobsPlotter.setViewRange(viewRange)
 
-document.querySelector('#user-json').onchange = onFileInput
+mouseWheelController.setContext(jobsPlotter.context)
 
-document.querySelector('#test').onclick = () => { jobsPlotter.changeJobColor('green') }
+document.querySelector('#user-json').onchange = onFileInput
 
 document.querySelector('#change-range').onclick = () => {
   const start = document.querySelector('#start-range').value

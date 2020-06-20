@@ -41,7 +41,7 @@ class ActionControlls {
       this.contextualMenu.showMenu(event)
     }
 
-    domRoot.onclick = ({ ctrlKey, target }) => {
+    domRoot.onmousedown = ({ ctrlKey, target }) => {
       const isRange = target.className.includes('range')
 
       this.contextualMenu.hideMenu()

@@ -11,6 +11,7 @@
 *.sln.docstates
 *.png
 *.json
+*.txt
 
 *.sln
 Web.config

@@ -12,7 +12,9 @@
 
 function readJobRegProfileData (storage, data) {
   data.forEach(({ jobId, name }) => {
-    storage.set(jobId, { name, ranges: [] })
+    const n = name[0].toUpperCase() + name.slice(1)
+
+    storage.set(jobId, { name: n, ranges: [] })
   })
 }
 

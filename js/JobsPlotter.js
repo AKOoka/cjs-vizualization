@@ -72,7 +72,6 @@ class JobsPlotter {
     }
   }
 
-  // maybe we should use somthing like http://pixijs.download/release/docs/index.html to increase performance
   updateRange () {
     if (!this.model) {
       return
