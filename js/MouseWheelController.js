@@ -5,7 +5,6 @@ class MouseWheelController {
   }
 
   zoom (relMouseX, zoomDirection) {
-    console.log('Out')
     const { domRoot } = this.context
 
     const rangeWidth = this.viewRange.end - this.viewRange.start
@@ -33,8 +32,6 @@ class MouseWheelController {
       } else if (event.deltaY > 0) {
         newRange = this.zoom(event.clientX - domRoot.offsetLeft, 1)
       }
-
-      console.log(`mouse = ${event.clientX - domRoot.offsetLeft}\nstart = ${newRange.startPos}\nend = ${newRange.endPos}`)
 
       this.viewRange.setRange(newRange.startPos, newRange.endPos, this)
     }

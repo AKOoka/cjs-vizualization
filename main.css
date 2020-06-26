@@ -3,6 +3,32 @@ body {
   padding: 100px;
 }
 
+#plotter-container {
+
+}
+
+#time-line {
+  height: 50px;
+  position: relative;
+}
+
+.time-marker {
+  position: absolute;
+  z-index: 1;
+}
+
+.marker-line {
+  width: 2px;
+  height: 550px;
+  user-select: none;
+  background-color: lightseagreen;
+  opacity: 0.5;
+}
+
+.marker-text {
+  font-size: 10px;
+}
+
 #job-plotter {
   width: 100%;
   height: 500px;

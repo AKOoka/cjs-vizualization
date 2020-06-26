@@ -7,13 +7,13 @@
 </head>
 <body>
 
-<input type="number" value="0" id="start-range">
-<input type="number" value="1" id="end-range">
-<button id="change-range">set range</button>
+<button id="json-update">update json</button>
+<input type="file" id="json-input" accept=".json">
 
-<input type="file" id="user-json" accept=".json">
-
-<div id="job-plotter"></div>
+<div id="plotter-container">
+  <div id="time-line"></div>
+  <div id="job-plotter"></div>
+</div>
 <div id="slider"></div>
 
 <style type="text/css" id="range-styles"></style>

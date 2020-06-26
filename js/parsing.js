@@ -122,8 +122,7 @@ function parseData ({
 }) {
   const meta = {
     startTime: rangeBeginEndEventProfileData[0].timestamp,
-    endTime: rangeBeginEndEventProfileData[rangeBeginEndEventProfileData.length - 1].timestamp,
-    timeUnit: 'ms'
+    endTime: rangeBeginEndEventProfileData[rangeBeginEndEventProfileData.length - 1].timestamp
   }
   const processorsMap = []
   const jobsMap = new Map()
