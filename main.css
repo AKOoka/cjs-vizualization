@@ -22,7 +22,6 @@ body {
   height: 550px;
   user-select: none;
   background-color: lightseagreen;
-  opacity: 0.5;
 }
 
 .marker-text {
@@ -73,12 +72,12 @@ body {
   position: absolute;
   height: 50px;
   box-sizing: border-box;
-  border: 1px solid rgb(218, 57, 164);
-  background-color: red;
+  border: 1px solid rgba(0, 0, 0, 0.2);
   overflow: hidden;
   text-overflow: ellipsis;
   cursor: pointer;
   user-select: none;
+  z-index: 2;
 }
 
 .selected {
