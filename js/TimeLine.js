@@ -20,10 +20,12 @@ class TimeLine {
   setMeta ({ startTime, endTime }) {
     this.plotterWidth = endTime - startTime
 
+    this.clearDOM()
     this.createDOM()
   }
 
   clearDOM () {
+    // need to make container for which i will remove instead manually delete all children
     while (this.context.children.length > 0) {
       this.context.children[0].remove()
     }

@@ -1,4 +1,4 @@
-import { ActionControlls } from './ActionControlls.js'
+import { MouseActionControlls } from './MouseActionControlls.js'
 import { JobsDOMComposer } from './JobsDOMComposer.js'
 
 class JobsPlotter {
@@ -6,7 +6,7 @@ class JobsPlotter {
     this.context = null
     this.model = null
     this.jobsDOMComposer = new JobsDOMComposer()
-    this.actionCotrolls = new ActionControlls()
+    this.MouseActionControlls = new MouseActionControlls()
     this.viewRange = null
     this.visibleRanges = null
     this.rangesAS = null
@@ -15,33 +15,37 @@ class JobsPlotter {
   setContext (context) {
     this.context = context
 
-    this.actionCotrolls.setContext(this.context.domRoot)
+    this.MouseActionControlls.setContext(this.context.domRoot)
   }
 
   setModel (model) {
     this.model = model
 
     this.jobsDOMComposer.createDOMModel(model)
-    this.actionCotrolls.setModel(model)
+    this.MouseActionControlls.setModel(model)
+    this.createDOMRange()
   }
 
   setViewRange (viewRange) {
     this.viewRange = viewRange
   }
 
-  setDOMComposer (domComposer) {
-    this.domComposer = domComposer
-
+  createDOMRange () {
     this.visibleRanges = []
 
-    this.domComposer.jobsDOMModel.forEach((value, index) => {
+    while (this.context.domRoot.children.length > 0) {
+      // need to make container for jobRanges which i will remove instead manually delete all ranges
+      this.context.domRoot.children[0].remove()
+    }
+
+    this.jobsDOMComposer.jobsDOMModel.forEach((value, index) => {
       this.visibleRanges.push(index)
     })
 
     const visibleDOMRanges = new Map()
 
     this.visibleRanges.forEach(index => {
-      visibleDOMRanges.set(index, this.domComposer.jobsDOMModel[index])
+      visibleDOMRanges.set(index, this.jobsDOMComposer.jobsDOMModel[index])
     })
 
     const plotterWidth = this.context.domRoot.offsetWidth

@@ -1,14 +1,13 @@
 import { parseData } from './parsing.js'
 import { JobsDataModel } from './JobsDataModel.js'
-import { JobsDOMComposer } from './JobsDOMComposer.js'
 import { jobsPlotter } from './JobsPlotter.js'
 import { ViewRange } from './ViewRange.js'
 import { Slider } from './Slider.js'
 import { TimeLine } from './TimeLine.js'
 import { MouseWheelController } from './MouseWheelController.js'
 
-async function onJsonInput (event) {
-  const file = event.target.files[0]
+async function readJson (jsonFile) {
+  const file = jsonFile
   const text = await file.text()
   const json = await JSON.parse(text)
 
@@ -17,7 +16,6 @@ async function onJsonInput (event) {
   model = JobsDataModel.fromParseData(parseData(json))
 
   jobsPlotter.setModel(model)
-  jobsPlotter.setDOMComposer(new JobsDOMComposer(model))
   jobsPlotter.updateRange()
 
   timeLine.setMeta(model.meta)
@@ -25,8 +23,12 @@ async function onJsonInput (event) {
   console.log(model)
 }
 
+function onJsonInput (event) {
+  readJson(event.target.files[0])
+}
+
 function onJsonUpdate () {
-  jsonInput.files[0].text().then(res => console.log(res))
+  readJson(jsonInput.files[0])
 }
 
 const jsonInput = document.querySelector('#json-input')

@@ -43,7 +43,7 @@ class Slider {
   }
 
   updateRange (start, end, eventTrigger) {
-    // need to rethink observer patern because only slider needs to change something exept viewRange.start and veiwRange.end
+    // usless parametrs, i have them in this.viewRange
     if (eventTrigger === this) {
       return
     }

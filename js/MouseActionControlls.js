@@ -6,7 +6,7 @@ function getIndex (div) {
   return div.className.match(/job-\d+/)[0].slice(4)
 }
 
-class ActionControlls {
+class MouseActionControlls {
   constructor () {
     this.model = null
     this.selectedJobs = new Set()
@@ -96,4 +96,4 @@ class ActionControlls {
   }
 }
 
-export { ActionControlls }
+export { MouseActionControlls }
