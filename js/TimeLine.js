@@ -1,82 +1,130 @@
+import { TimeLineInfo } from './TimeLineInfo.js'
+
 class TimeLine {
   constructor (viewRange) {
     this.viewRange = viewRange
     this.context = null
-    this.plotterWidth = null
-    this.timeLineInterval = 20
+    this.domContainer = null
+    this.timeMarkersContainer = null
+    this.startTimeMarker = null
+    this.endTimeMarker = null
+    this.timeLineInfo = null
+    this.timeSpan = null
+    this.markerStep = 1000
   }
 
-  updateRange (start, end, eventTrigger) {
-    this.clearDOM()
-    this.createDOM()
-  }
+  updateRange () {
+    this.clearTimeMarkers()
 
-  setContext (context) {
-    this.context = context
+    const rangeWidth = this.viewRange.end - this.viewRange.start
+    const viewRangeTimeSpan = rangeWidth * this.timeSpan
+    const startTimeRange = this.viewRange.start * this.timeSpan
+    const endTimeRange = this.viewRange.end * this.timeSpan
+    const a = (1 / rangeWidth) * this.timeMarkersContainer.offsetWidth / this.timeSpan
+    const b = -this.viewRange.start * (1 / rangeWidth) * this.timeMarkersContainer.offsetWidth
 
-    // this.createDOM()
-  }
+    const timeToPlotter = (time) => {
+      return time * a + b
+    }
 
-  setMeta ({ startTime, endTime }) {
-    this.plotterWidth = endTime - startTime
+    this.timeLineInfo.changeRangeTime(this.convertTime(viewRangeTimeSpan))
+    this.startTimeMarker.textContent = this.convertTime(startTimeRange)
+    this.endTimeMarker.textContent = this.convertTime(endTimeRange)
 
-    this.clearDOM()
-    this.createDOM()
-  }
+    this.markerStep = 100000
+    const markerCond = viewRangeTimeSpan / 26
 
-  clearDOM () {
-    // need to make container for which i will remove instead manually delete all children
-    while (this.context.children.length > 0) {
-      this.context.children[0].remove()
+    while (this.markerStep > markerCond) {
+      this.markerStep /= 2
+    }
+
+    let markerTime = Math.floor(startTimeRange / this.markerStep + 1) * this.markerStep
+
+    for (markerTime; markerTime <= endTimeRange; markerTime += this.markerStep) {
+      this.timeMarkersContainer.append(this.createTimeMarker(this.convertTime(markerTime), timeToPlotter(markerTime)))
     }
   }
 
-  convertTime (time, timeIntervalLength) {
+  setContext (context) {
+    const staticTimeMarkersContainer = document.createElement('section')
+
+    staticTimeMarkersContainer.classList.add('static-markers-container')
+
+    this.timeMarkersContainer = document.createElement('section')
+
+    this.domContainer = document.createElement('section')
+    this.domContainer.classList.add('time-line') // it should be named 'time-line-container'
+    this.domContainer.append(this.timeMarkersContainer, staticTimeMarkersContainer)
+
+    this.context = context
+    this.context.append(this.domContainer)
+
+    this.startTimeMarker = this.createSideTimeMarker(0)
+    this.endTimeMarker = this.createSideTimeMarker(staticTimeMarkersContainer.offsetWidth)
+    this.timeLineInfo = new TimeLineInfo()
+
+    staticTimeMarkersContainer.append(this.startTimeMarker, this.timeLineInfo.domContainer, this.endTimeMarker)
+  }
+
+  setMeta (meta) {
+    this.timeSpan = meta.endTime - meta.startTime
+
+    this.timeLineInfo.changeTotalTime(this.convertTime(this.timeSpan))
+    this.updateRange()
+  }
+
+  clearTimeMarkers () {
+    this.timeMarkersContainer.remove()
+
+    this.timeMarkersContainer = document.createElement('section')
+    this.timeMarkersContainer.classList.add('time-markers-container')
+
+    this.domContainer.append(this.timeMarkersContainer)
+  }
+
+  convertTime (time) {
     let outputTime = time
 
-    if (timeIntervalLength < 100) {
+    if (time <= 100) {
       outputTime = outputTime.toString() + 'μs'
-    } else if (timeIntervalLength > 100 && timeIntervalLength < 1000) {
+    } else if (time > 100 && time <= 1000) {
       outputTime = (outputTime / 1000).toFixed(2).toString() + 'ms'
-    } else if (timeIntervalLength > 1000 && timeIntervalLength < 100000) {
+    } else if (time > 1000 && time <= 100000) {
       outputTime = Math.round(outputTime / 1000).toString() + 'ms'
-    } else if (timeIntervalLength > 100000 && timeIntervalLength < 1000000) {
+    } else if (time > 100000 && time <= 1000000) {
       outputTime = (outputTime / 1000000).toFixed(2).toString() + 's'
-    } else if (timeIntervalLength > 1000000) {
+    } else if (time > 1000000) {
       outputTime = Math.round(outputTime / 1000000).toString() + 's'
     }
 
     return outputTime
   }
 
-  createDOM () {
-    const timeInterval = (this.viewRange.end - this.viewRange.start) / this.timeLineInterval
-    const timeIntervalLength = timeInterval * this.plotterWidth
-    const positionInterval = this.context.offsetWidth / this.timeLineInterval
+  createTimeMarker (text, domPosition) {
+    const domText = document.createElement('span')
+    const domTimeMarker = document.createElement('div')
+    const domTimeLine = document.createElement('div')
 
-    for (let i = 0; i <= this.timeLineInterval; i++) {
-      const markerPosition = i * positionInterval
-      const markerTime = Math.round((this.viewRange.start + i * timeInterval) * this.plotterWidth)
+    domTimeLine.classList.add('marker-line')
 
-      this.context.append(this.createTimeMarkerDOM(markerPosition, this.convertTime(markerTime, timeIntervalLength)))
-    }
+    domText.classList.add('marker-text')
+    domText.textContent = text
+
+    // should correct width of timeLine
+    domTimeMarker.style.left = `${domPosition}px`
+    domTimeMarker.classList.add('time-marker')
+    domTimeMarker.append(domText, domTimeLine)
+
+    return domTimeMarker
   }
 
-  createTimeMarkerDOM (position, time) {
-    const timeMarker = document.createElement('div')
-    const markerLine = document.createElement('div')
-    const markerText = document.createElement('span')
+  createSideTimeMarker (domPosition) {
+    const domTimeMarker = document.createElement('div')
 
-    timeMarker.classList.add('time-marker')
-    markerLine.classList.add('marker-line')
-    markerText.classList.add('marker-text')
+    domTimeMarker.classList.add('side-time-marker')
+    domTimeMarker.style.left = `${domPosition}px`
 
-    markerText.textContent = time
-
-    timeMarker.style.left = `${position}px`
-    timeMarker.append(markerText, markerLine)
-
-    return timeMarker
+    return domTimeMarker
   }
 }
 

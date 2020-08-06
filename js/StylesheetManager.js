@@ -4,7 +4,7 @@ class StylesheetManager {
   }
 
   changeStyleForJob (jobId) {
-    this.stylesheet.sheet.insertRule(`.job-${jobId}.range { background-color: green; }`, 0)
+    this.stylesheet.sheet.insertRule(`.job-${jobId}.range { filter: brightness(80%); border: 2px dashed black; color: white; font-weight: bold; }`, 0)
     console.log(this.stylesheet.sheet)
   }
 

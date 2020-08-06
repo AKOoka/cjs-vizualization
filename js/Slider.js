@@ -133,6 +133,9 @@ function onMousemove (event, slider) {
   if (slider.dragged) {
     // slider.moveSliderTo(target)
     slider.moveRangeTo(target)
+    if (slider.dragged === 'center-slider') {
+      event.target.style.cursor = 'grabbing'
+    }
   }
 
   slider.lastTarget = target
@@ -143,6 +146,11 @@ function onMouseup (event, slider) {
     const target = event.clientX - slider.container.offsetLeft
 
     slider.moveRangeTo(target)
+
+    if (slider.dragged === 'center-slider') {
+      event.target.style.cursor = 'grab'
+    }
+
     slider.dragged = null
   }
 }

@@ -5,6 +5,8 @@ class ViewRange {
     this.subscribers = []
   }
 
+  // add method and value for rangeWidth
+
   subscribe (sub) {
     this.subscribers.push(sub)
   }

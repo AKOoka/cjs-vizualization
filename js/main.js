@@ -13,6 +13,9 @@ async function readJson (jsonFile) {
 
   console.time('parse')
 
+  viewRange.setRange(0, 1, null)
+
+  // jobsDataModel isn't very usefull class
   model = JobsDataModel.fromParseData(parseData(json))
 
   jobsPlotter.setModel(model)
@@ -46,7 +49,7 @@ viewRange.subscribe(slider)
 viewRange.subscribe(mouseWheelController)
 viewRange.subscribe(timeLine)
 
-timeLine.setContext(document.querySelector('#time-line'))
+timeLine.setContext(document.querySelector('#time-line-container'))
 
 Slider.createSliderDOM(document.querySelector('#slider'), slider)
 
