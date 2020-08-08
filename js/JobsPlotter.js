@@ -30,8 +30,6 @@ class JobsPlotter {
     this.jobsDomComposer.createDOMModel(model)
     this.MouseActionControlls.setModel(model)
     this.createDOMRange()
-
-    console.log(this.jobsDomComposer)
   }
 
   setViewRange (viewRange) {
@@ -54,17 +52,19 @@ class JobsPlotter {
     return domProcessor
   }
 
-  appendRangeDOM (domContainerProcessors, rangeDOM, processorId) {
+  appendRangeDOM (domContainerProcessors, domContainer, rangeDom, processorId) {
     const processor = domContainerProcessors.get(processorId)
 
     if (processor) {
-      processor.append(rangeDOM)
+      processor.append(rangeDom)
     } else {
       const processor = this.createDOMProcessor()
 
-      processor.append(rangeDOM)
-
       domContainerProcessors.set(processorId, processor)
+
+      processor.append(rangeDom)
+
+      domContainer.append(processor)
     }
   }
 
@@ -77,78 +77,68 @@ class JobsPlotter {
     this.context.domRoot.append(this.domContainer)
 
     this.visibleRanges = []
-
-    this.jobsDomComposer.jobsDOMModel.forEach(({ rangeDOM, processorId }, index) => {
-      // this.domContainer.append(rangeDOM)
-      this.appendRangeDOM(this.domContainerProcessors, rangeDOM, processorId)
-      this.visibleRanges.push({ index, processorId })
-    })
-
-    this.domContainerProcessors.forEach(processor => {
-      this.domContainer.append(processor)
-    })
-
     this.rangesAS = []
 
-    for (let i = 0; i < this.model.jobRanges.length; i++) {
-      const { job, rangeCounter } = this.model.jobRanges[i]
+    this.jobsDomComposer.jobsDOMModel.forEach(({ rangeDom, processorId }, index) => {
+      const { job, rangeCounter } = this.model.jobRanges[index]
       const { beginTimestamp, endTimestamp } = this.model.jobRecords.get(job).ranges[rangeCounter]
 
-      this.rangesAS.push({ index: i, time: beginTimestamp })
-      this.rangesAS.push({ index: i, time: endTimestamp })
-    }
+      this.rangesAS.push({ processorId, index, time: beginTimestamp })
+      this.rangesAS.push({ processorId, index, time: endTimestamp })
+
+      this.appendRangeDOM(this.domContainerProcessors, this.domContainer, rangeDom, processorId)
+      this.visibleRanges.push({ index, processorId })
+    })
   }
 
-  watchDomChanges (visibleRanges, rangesAS, jobsDomComposer, domContainerProcessors, startViewRange, endViewRange) {
-    const newRanges = []
-    const nonVisibleRanges = new Set()
-    const newVisibleRanges = new Set()
+  watchDomChanges (startPos, endPos) {
+    const newVisible = []
+    const nonVisibleRanges = new Map()
+    const newVisibleRanges = new Map()
 
-    for (const { time, index } of rangesAS) {
-      if (time >= startViewRange && time <= endViewRange) {
-        newRanges.push(visibleRanges[index])
+    for (const { processorId, index, time } of this.rangesAS) {
+      if (time >= startPos && time <= endPos) {
+        newVisible.push({ processorId, index })
 
-        if (!visibleRanges.some(range => range.index === index)) {
-          newVisibleRanges.add(visibleRanges[index])
+        if (!this.visibleRanges.some(range => range.index === index) && !newVisibleRanges.has(index)) {
+          newVisibleRanges.set(index, processorId)
         }
       }
     }
 
-    visibleRanges.forEach(range => {
-      if (!newRanges.some(({ index }) => index === range.index)) {
-        nonVisibleRanges.add(range)
+    for (const { index, processorId } of this.visibleRanges) {
+      if (!newVisible.some(range => range.index === index) && !nonVisibleRanges.has(index)) {
+        nonVisibleRanges.set(index, processorId)
       }
-    })
+    }
 
-    nonVisibleRanges.forEach(({ index, processorId }) => {
-      // this.domContainer.removeChild(this.jobsDomComposer.jobsDOMModel[range])
-      domContainerProcessors.get(processorId).removeChild(jobsDomComposer.jobsDOMModel[index].rangeDOM)
-    })
+    for (const [index, processorId] of nonVisibleRanges.entries()) {
+      this.domContainerProcessors.get(processorId).removeChild(this.jobsDomComposer.jobsDOMModel[index].rangeDom)
+    }
 
-    newVisibleRanges.forEach(({ index, processorId }) => {
-      // this.domContainer.append(this.jobsDomComposer.jobsDOMModel[range])
-      this.appendRangeDOM(domContainerProcessors, jobsDomComposer.jobsDOMModel[index].rangeDOM, processorId)
-    })
+    for (const [index, processorId] of newVisibleRanges.entries()) {
+      this.appendRangeDOM(this.domContainerProcessors, this.domContainer, this.jobsDomComposer.jobsDOMModel[index].rangeDom, processorId)
+    }
 
-    visibleRanges = newRanges
+    this.visibleRanges = newVisible
   }
 
   adjustDomRanges (visibleRanges, jobsDomComposer, model, scaleWidthFactor, translateFactor, traslateStart) {
     visibleRanges.forEach(({ index }) => {
-      const { rangeDOM } = jobsDomComposer.jobsDOMModel[index]
+      const { rangeDom } = jobsDomComposer.jobsDOMModel[index]
       const { job, rangeCounter } = model.jobRanges[index]
       const { beginTimestamp, endTimestamp } = model.jobRecords.get(job).ranges[rangeCounter]
 
       const domWidth = (endTimestamp - beginTimestamp) * scaleWidthFactor
       const pos = (beginTimestamp - traslateStart) * scaleWidthFactor - translateFactor
 
-      rangeDOM.style.left = pos + 'px'
-      rangeDOM.style.width = Math.max(1, domWidth) + 'px'
+      rangeDom.style.left = pos + 'px'
+      rangeDom.style.width = Math.max(1, domWidth) + 'px'
 
       if (domWidth <= 40) {
-        rangeDOM.classList.add('hiddeText')
+        rangeDom.classList.add('hiddeText')
       } else {
-        rangeDOM.classList.remove('hiddeText')
+        rangeDom.classList.remove('hiddeText')
       }
     })
   }
@@ -165,7 +155,7 @@ class JobsPlotter {
     const startPos = this.viewRange.start * width + min
     const endPos = this.viewRange.end * width + min
 
-    this.watchDomChanges(this.visibleRanges, this.rangesAS, this.jobsDomComposer, this.domContainerProcessors, startPos, endPos)
+    this.watchDomChanges(startPos, endPos)
 
     const scaleFactor = 1 / (this.viewRange.end - this.viewRange.start)
     const scaleWidthFactor = 1 / (width) * scaleFactor * this.domContainer.offsetWidth

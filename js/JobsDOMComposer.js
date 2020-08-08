@@ -101,24 +101,25 @@ class JobsDOMComposer {
       const { name, ranges } = model.jobRecords.get(job)
       const { beginTimestamp, endTimestamp, processorId } = ranges[rangeCounter]
 
-      const rangeDOM = document.createElement('div')
+      const rangeDom = document.createElement('div')
       const rangeWidth = endTimestamp - beginTimestamp
 
-      rangeDOM.textContent = name
+      rangeDom.textContent = name
 
-      rangeDOM.classList.add(`job-${job}`)
-      rangeDOM.classList.add('range')
-      rangeDOM.classList.add(`range-${rangeCounter}`)
-      rangeDOM.title = name
-      rangeDOM.style.left = `${beginTimestamp}px`
-      rangeDOM.style.width = `${rangeWidth}px`
-      rangeDOM.style.backgroundColor = `rgb(${jobColors.get(name)})`
+      rangeDom.classList.add(`job-${job}`)
+      rangeDom.classList.add('range')
+      rangeDom.classList.add(`range-${rangeCounter}`)
+      rangeDom.title = name
+      rangeDom.style.left = `${beginTimestamp}px`
+      rangeDom.style.width = `${rangeWidth}px`
+      rangeDom.style.backgroundColor = `rgb(${jobColors.get(name)})`
 
       if (rangeWidth <= 40) {
-        rangeDOM.classList.add('hiddeText')
+        rangeDom.classList.add('hiddeText')
       }
 
-      this.jobsDOMModel.push({ processorId, rangeDOM })
+      // this.jobsDOMModel.push(rangeDom)
+      this.jobsDOMModel.push({ processorId, rangeDom })
     }
   }
 }
