@@ -16,12 +16,11 @@ class TimeLine {
   updateRange () {
     this.clearTimeMarkers()
 
-    const rangeWidth = this.viewRange.end - this.viewRange.start
-    const viewRangeTimeSpan = rangeWidth * this.timeSpan
+    const viewRangeTimeSpan = this.viewRange.width * this.timeSpan
     const startTimeRange = this.viewRange.start * this.timeSpan
     const endTimeRange = this.viewRange.end * this.timeSpan
-    const a = (1 / rangeWidth) * this.timeMarkersContainer.offsetWidth / this.timeSpan
-    const b = -this.viewRange.start * (1 / rangeWidth) * this.timeMarkersContainer.offsetWidth
+    const a = (1 / this.viewRange.width) * this.timeMarkersContainer.offsetWidth / this.timeSpan
+    const b = -this.viewRange.start * (1 / this.viewRange.width) * this.timeMarkersContainer.offsetWidth
 
     const timeToPlotter = (time) => {
       return time * a + b
@@ -52,8 +51,8 @@ class TimeLine {
 
     this.timeMarkersContainer = document.createElement('section')
 
-    this.domContainer = document.createElement('section')
-    this.domContainer.classList.add('time-line') // it should be named 'time-line-container'
+    this.domContainer = document.createElement('div')
+    this.domContainer.classList.add('time-line-container')
     this.domContainer.append(this.timeMarkersContainer, staticTimeMarkersContainer)
 
     this.context = context

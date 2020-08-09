@@ -3,22 +3,27 @@
 <head>
   <meta charset="UTF-8">
   <title>Document</title>
-  <link rel="stylesheet" type="text/css" href="./css/main.css">
+  <link rel="stylesheet" type="text/css" href="./dist/css/main.css">
 </head>
 <body>
 
-<button id="json-update">Update Data</button>
-<input type="file" id="json-input" accept=".json">
-
-<div id="plotter-container">
-  <div id="time-line-container"></div>
-  <div id="job-plotter"></div>
-</div>
-<div id="slider"></div>
+<main id="app">
+  <div id="file-managment">
+    <button id="json-update">Update Data</button>
+    <input type="file" id="json-select" accept=".json">
+  </div>
+  <div id="time-line-info"></div>
+  <div id="processor-labels-container"></div>
+  <div id="job-plotter">
+    <div id="time-line-container"></div>
+    <div id="job-plotter-container"></div>
+  </div>
+  <div id="slider"></div>
+</main>
 
 <style type="text/css" id="range-styles"></style>
 
-<script type="module" src="./js/main.js"></script>
+<script type="module" src="./dist/js/main.js"></script>
 
 </body>
 </html>

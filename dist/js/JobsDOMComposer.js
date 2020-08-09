@@ -56,7 +56,7 @@ function convertHSVToRGB (hue, saturation, value) {
 
 class JobsDOMComposer {
   constructor () {
-    this.jobsDOMModel = null
+    this.jobsDomModel = null
   }
 
   generateColorsByModel (model) {
@@ -92,10 +92,10 @@ class JobsDOMComposer {
     return jobColors
   }
 
-  createDOMModel (model) {
+  createDomModel (model) {
     const jobColors = this.generateColorsByModel(model)
 
-    this.jobsDOMModel = []
+    this.jobsDomModel = []
 
     for (const { job, rangeCounter } of model.jobRanges.values()) {
       const { name, ranges } = model.jobRecords.get(job)
@@ -118,8 +118,7 @@ class JobsDOMComposer {
         rangeDom.classList.add('hiddeText')
       }
 
-      // this.jobsDOMModel.push(rangeDom)
-      this.jobsDOMModel.push({ processorId, rangeDom })
+      this.jobsDomModel.push({ processorId, rangeDom })
     }
   }
 }

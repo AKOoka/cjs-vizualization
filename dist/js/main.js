@@ -34,7 +34,7 @@ function onJsonUpdate () {
   readJson(jsonInput.files[0])
 }
 
-const jsonInput = document.querySelector('#json-input')
+const jsonInput = document.querySelector('#json-select')
 const jsonUpdate = document.querySelector('#json-update')
 
 const viewRange = new ViewRange()
@@ -54,7 +54,10 @@ timeLine.setContext(document.querySelector('#time-line-container'))
 Slider.createSliderDOM(document.querySelector('#slider'), slider)
 
 jobsPlotter.setContext({
-  domRoot: document.querySelector('#job-plotter')
+  domRoot: document.querySelector('#job-plotter'),
+  plotterContainer: document.querySelector('#job-plotter-container'),
+  processorLabelsDomContainer: document.querySelector('#processor-labels-container'),
+  timeLineInfo: document.querySelector('#time-line-info')
 })
 jobsPlotter.setViewRange(viewRange)
 

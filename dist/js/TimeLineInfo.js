@@ -10,7 +10,7 @@ class TimeLineInfo {
     this.selectedTimeSpanTextDOM.textContent = selectedTime
 
     this.domContainer.classList.add('time-line-info')
-    this.domContainer.append(this.rangeTimeSpanTextDOM, this.totalTimeSpanTextDOM, this.selectedTimeSpanTextDOM)
+    this.domContainer.append(this.rangeTimeSpanTextDOM, '/', this.totalTimeSpanTextDOM, '/', this.selectedTimeSpanTextDOM)
   }
 
   changeRangeTime (time) {
