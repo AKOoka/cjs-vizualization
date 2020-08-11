@@ -8,6 +8,7 @@ class JobsPlotter {
     this.domContainerProcessors = null
     this.jobsDomComposer = new JobsDOMComposer()
     this.mouseActionControlls = new MouseActionControlls()
+    this.timeLine = null
     this.viewRange = null
     this.visibleRanges = null
     this.rangesAS = null
@@ -16,19 +17,26 @@ class JobsPlotter {
   setContext (context) {
     this.context = context
 
-    this.mouseActionControlls.setContext(this.context.domRoot) // change this.context.domRoot to this.domContainer
+    this.timeLine.setContext(context)
   }
 
   setModel (model) {
     this.model = model
 
     this.jobsDomComposer.createDomModel(model)
-    this.MouseActionControlls.setModel(model)
+    this.mouseActionControlls.setModel(model)
+    this.timeLine.setModel(model)
     this.createDomRange()
+
+    this.mouseActionControlls.setContext(this.domContainerProcessors)
   }
 
   setViewRange (viewRange) {
     this.viewRange = viewRange
+  }
+
+  setTimeLine (timeLine) {
+    this.timeLine = timeLine
   }
 
   createDomContainer () {
@@ -40,7 +48,7 @@ class JobsPlotter {
   }
 
   createDomProcessor () {
-    const domProcessor = document.createElement('section')
+    const domProcessor = document.createElement('div')
 
     domProcessor.classList.add('processor')
 
@@ -48,7 +56,7 @@ class JobsPlotter {
   }
 
   createDomProcessorLabel (processorId) {
-    const domProcessorLabel = document.createElement('section')
+    const domProcessorLabel = document.createElement('div')
     // const textDom = document.createElement('span')
 
     domProcessorLabel.classList.add('processor-label')
@@ -57,7 +65,7 @@ class JobsPlotter {
 
     // domProcessorLabel.append(textDom)
 
-    domProcessorLabel.append(`processor#${processorId}`)
+    domProcessorLabel.append(`core-#${processorId}`)
     return domProcessorLabel
   }
 

@@ -21,8 +21,6 @@ async function readJson (jsonFile) {
   jobsPlotter.setModel(model)
   jobsPlotter.updateRange()
 
-  timeLine.setMeta(model.meta)
-
   console.log(model)
 }
 
@@ -49,17 +47,19 @@ viewRange.subscribe(slider)
 viewRange.subscribe(mouseWheelController)
 viewRange.subscribe(timeLine)
 
-timeLine.setContext(document.querySelector('#time-line-container'))
-
 Slider.createSliderDOM(document.querySelector('#slider'), slider)
 
+jobsPlotter.setTimeLine(timeLine)
+jobsPlotter.setViewRange(viewRange)
 jobsPlotter.setContext({
   domRoot: document.querySelector('#job-plotter'),
   plotterContainer: document.querySelector('#job-plotter-container'),
   processorLabelsDomContainer: document.querySelector('#processor-labels-container'),
-  timeLineInfo: document.querySelector('#time-line-info')
+  timeLineInfo: document.querySelector('#time-line-info'),
+  timeLinesContainer: document.querySelector('#time-lines-container'),
+  summaryTimeBar: document.querySelector('#summary-time-bar'),
+  timeMarkersContainer: document.querySelector('#time-markers-container')
 })
-jobsPlotter.setViewRange(viewRange)
 
 mouseWheelController.setContext(jobsPlotter.context)
 

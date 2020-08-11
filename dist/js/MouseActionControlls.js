@@ -16,28 +16,30 @@ class MouseActionControlls {
     this.stylesheetManager = new StylesheetManager()
   }
 
-  setContext (domRoot) {
+  setContext (context) {
     const { deselectJob, selectJob, deselectAllJobs } = this.jobSelector
 
-    domRoot.oncontextmenu = event => {
-      event.preventDefault()
+    for (const processor of context.values()) {
+      processor.oncontextmenu = event => {
+        event.preventDefault()
 
-      this.contextualMenu.hideMenu()
+        this.contextualMenu.hideMenu()
 
-      this.contextualMenu.showMenu(event)
-    }
+        this.contextualMenu.showMenu(event)
+      }
 
-    domRoot.onmousedown = ({ ctrlKey, target }) => {
-      const isRange = target.className.includes('range')
+      processor.onmousedown = ({ ctrlKey, target }) => {
+        const isRange = target.className.includes('range')
 
-      this.contextualMenu.hideMenu()
+        this.contextualMenu.hideMenu()
 
-      if (ctrlKey && isRange) {
-        deselectJob(getIndex(target), target, this.selectedJobs, this.selectedJobDOMElements)
-      } else if (isRange) {
-        selectJob(getIndex(target), target, this.selectedJobs, this.selectedJobDOMElements)
-      } else {
-        deselectAllJobs(this.selectedJobs, this.selectedJobDOMElements)
+        if (ctrlKey && isRange) {
+          deselectJob(getIndex(target), target, this.selectedJobs, this.selectedJobDOMElements)
+        } else if (isRange) {
+          selectJob(getIndex(target), target, this.selectedJobs, this.selectedJobDOMElements)
+        } else {
+          deselectAllJobs(this.selectedJobs, this.selectedJobDOMElements)
+        }
       }
     }
   }
