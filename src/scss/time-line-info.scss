@@ -1,0 +1,33 @@
+#time-line-info {
+  grid-area: time-line-info;
+
+  & #summary-time-bar {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  & #time-markers-container {
+    position: relative;
+  }
+}
+
+.static-markers-container {
+  display: flex;
+  justify-content: space-between;
+}
+
+.time-marker {
+  position: absolute;
+  z-index: 1;
+}
+
+.marker-line {
+  width: 2px;
+  height: 100%;
+  user-select: none;
+  background-color: lightseagreen;
+}
+
+.marker-text {
+  font-size: 10px;
+}

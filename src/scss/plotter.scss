@@ -1,0 +1,86 @@
+#job-plotter {
+  grid-area: job-plotter;
+  position: relative;
+  background-color: silver;
+  overflow: hidden;
+}
+
+#time-lines-container {
+  position: absolute;
+  height: 100%;
+}
+
+#jobs-plotter-container {
+	position: relative;
+	z-index: 2;
+}
+
+#processor-labels-container {
+  grid-area: processor-labels-container;
+}
+
+.time-line {
+  position: absolute;
+  height: 100%;
+  width: 2px;
+  background-color: #939393;
+}
+
+.processor-label {
+	height: 28px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.processor {
+	height: 28px;
+	display: flex;
+	align-items: center;
+	position: relative;
+  box-sizing: border-box;
+}
+
+.range {
+	position: absolute;
+	height: 20px;
+	box-sizing: border-box;
+	border: 1px solid rgba(0, 0, 0, 0.2);
+	overflow: hidden;
+	text-overflow: ellipsis;
+	cursor: pointer;
+	user-select: none;
+}
+
+.selected {
+  border: 1px solid greenyellow;
+}
+
+.plotter-menu {
+	position: absolute;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-evenly;
+	width: 200px;
+	height: 200px;
+	background-color: coral;
+	z-index: 10;
+}
+
+.plotter-menu__option {
+	flex: 100px 2 2;
+	padding: 0;
+	border: none;
+
+	&:hover {
+		background-color: cornflowerblue;
+  }
+
+	&:active {
+		text-decoration: none;
+  }
+}
+
+.hiddeText {
+  color: transparent;
+}

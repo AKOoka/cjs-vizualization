@@ -16,7 +16,7 @@ function clean () {
 }
 
 function styles () {
-  return gulp.src('./src/sass/**/*.sass')
+  return gulp.src('./src/scss/**/*.scss')
     .pipe(sass({ outputStyle: 'compressed' }).on('error', sass.logError))
     .pipe(concat('main.css'))
     .pipe(autoprefixer({
@@ -42,7 +42,7 @@ function scripts () {
 function watch () {
   browserSync.init({ server: { baseDir: './' } })
 
-  gulp.watch('./src/sass/**/*.sass', styles)
+  gulp.watch('./src/scss/**/*.scss', styles)
   gulp.watch('./src/js/**/*.js', scripts)
   gulp.watch('./*.html').on('change', browserSync.reload)
 }

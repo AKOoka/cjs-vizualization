@@ -1,0 +1,13 @@
+body {
+  margin: 0;
+  padding: 100px;
+}
+
+#app {
+  display: grid;
+  grid-template: {
+    rows: 50px 50px auto 24px;
+    columns: 100px auto;
+    areas: "file-managment file-managment" ". time-line-info" "processor-labels-container job-plotter" ". slider";
+  }
+}

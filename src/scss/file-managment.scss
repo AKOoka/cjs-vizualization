@@ -1,0 +1,9 @@
+#file-managment {
+  grid-area: file-managment;
+}
+
+button {
+	&::-moz-focus-inner {
+    border: none;
+  }
+}

@@ -40,6 +40,7 @@ class JobsPlotter {
   }
 
   createDomContainer () {
+    // private
     const domContainer = document.createElement('div')
 
     domContainer.id = 'jobs-plotter-container'
@@ -48,6 +49,7 @@ class JobsPlotter {
   }
 
   createDomProcessor () {
+    // private
     const domProcessor = document.createElement('div')
 
     domProcessor.classList.add('processor')
@@ -56,20 +58,17 @@ class JobsPlotter {
   }
 
   createDomProcessorLabel (processorId) {
+    // private
     const domProcessorLabel = document.createElement('div')
-    // const textDom = document.createElement('span')
 
     domProcessorLabel.classList.add('processor-label')
-
-    // textDom.textContent = processorId
-
-    // domProcessorLabel.append(textDom)
-
     domProcessorLabel.append(`core-#${processorId}`)
+
     return domProcessorLabel
   }
 
   appendRangeDom (rangeDom, processorId) {
+    // private
     const processor = this.domContainerProcessors.get(processorId)
 
     if (processor) {
@@ -88,6 +87,7 @@ class JobsPlotter {
   }
 
   createDomRange () {
+    // private
     const plotterContainer = this.createDomContainer()
 
     this.context.plotterContainer.replaceWith(plotterContainer)
@@ -111,6 +111,7 @@ class JobsPlotter {
   }
 
   watchDomChanges (startPos, endPos) {
+    // private
     const newVisible = []
     const nonVisibleRanges = new Map()
     const newVisibleRanges = new Map()
@@ -143,6 +144,7 @@ class JobsPlotter {
   }
 
   adjustDomRanges (scaleWidthFactor, translateFactor, traslateStart) {
+    // private
     this.visibleRanges.forEach(({ index }) => {
       const { rangeDom } = this.jobsDomComposer.jobsDomModel[index]
       const { job, rangeCounter } = this.model.jobRanges[index]
