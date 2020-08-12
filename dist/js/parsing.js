@@ -16,13 +16,13 @@ function readJobRegProfileData (storage, data) {
   })
 }
 
-function readRangeData (jobsMap, processorsMap, data) {
+function readRangeData (jobRecords, jobRanges, data) {
   const openRange = new Set()
 
   // it should be sorted before going through
 
   data.forEach(({ job, processorId, timestamp }) => {
-    const jobRanges = jobsMap.get(job).ranges
+    const jobRanges = jobRecords.get(job).ranges
     const rangeCounter = jobRanges.length
 
     if (openRange.has(job)) {
@@ -33,16 +33,16 @@ function readRangeData (jobsMap, processorsMap, data) {
       return
     }
 
-    // const processor = processorsMap.get(processorId)
+    // const processor = jobRanges.get(processorId)
     // const processorRange = { job, rangeCounter }
 
     // if (!processor) {
-    //   processorsMap.set(processorId, [processorRange])
+    //   jobRanges.set(processorId, [processorRange])
     // } else {
     //   processor.push(processorRange)
     // }
 
-    processorsMap.push({ job, rangeCounter })
+    jobRanges.push({ job, rangeCounter })
 
     jobRanges.push({ beginTimestamp: timestamp, processorId })
 
@@ -62,26 +62,26 @@ function readRangeData (jobsMap, processorsMap, data) {
   //       jobId: cur.job
   //     }
 
-  //     const processor = processorsMap.get(cur.processorId)
+  //     const processor = jobRanges.get(cur.processorId)
 
   //     if (!processor) {
   //       processorRange.rangeCounter = 0
 
-  //       processorsMap.set(cur.processorId, [processorRange])
+  //       jobRanges.set(cur.processorId, [processorRange])
   //     } else {
   //       processorRange.rangeCounter = processor.length
 
   //       processor.push(processorRange)
   //     }
 
-  //     jobsMap.get(cur.job).ranges.push({
+  //     jobRecords.get(cur.job).ranges.push({
   //       beginTimestamp: cur.timestamp,
   //       endTimestamp: next.timestamp
   //     })
   //   } else {
   //     alert ('Different jobIds for one range')
 
-  //     throw new Error(`\n ${jobsMap.get(cur.job).name}: ${toStringObject(cur)};\n ${jobsMap.get(next.job).name}: ${toStringObject(next)};`)
+  //     throw new Error(`\n ${jobRecords.get(cur.job).name}: ${toStringObject(cur)};\n ${jobsMap.get(next.job).name}: ${toStringObject(next)};`)
   //   }
   // }
 }
@@ -125,22 +125,22 @@ function parseData ({
     endTime: rangeBeginEndEventProfileData[rangeBeginEndEventProfileData.length - 1].timestamp,
     timeSpan: rangeBeginEndEventProfileData[rangeBeginEndEventProfileData.length - 1].timestamp - rangeBeginEndEventProfileData[0].timestamp
   }
-  const processorsMap = []
-  const jobsMap = new Map()
-  const spawnedJobsMap = new Map()
-  const atomicCountersMap = new Map()
+  const jobRanges = [] // is broken
+  const jobRecords = new Map()
+  const spawnedJobs = new Map()
+  const atomicCounterRecords = new Map()
 
-  readJobRegProfileData(jobsMap, jobRegProfileData)
-  readRangeData(jobsMap, processorsMap, rangeBeginEndEventProfileData)
-  readJobSpawnsData(spawnedJobsMap, jobSpawnsProfileData)
-  readAtomicCounterData(atomicCountersMap, atomicCounterEventsProfileData)
+  readJobRegProfileData(jobRecords, jobRegProfileData)
+  readRangeData(jobRecords, jobRanges, rangeBeginEndEventProfileData)
+  readJobSpawnsData(spawnedJobs, jobSpawnsProfileData)
+  readAtomicCounterData(atomicCounterRecords, atomicCounterEventsProfileData)
 
   return {
     meta,
-    processorsMap,
-    jobsMap,
-    spawnedJobsMap,
-    atomicCountersMap
+    jobRanges,
+    jobRecords,
+    spawnedJobs,
+    atomicCounterRecords
   }
 }
 

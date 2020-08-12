@@ -10,14 +10,18 @@ class ViewRange {
     this.subscribers.push(sub)
   }
 
-  setRange (start, end, eventTrigger) {
+  notify () {
+    this.subscribers.forEach(sub => {
+      sub.updateRange()
+    })
+  }
+
+  setRange (start, end) {
     this.start = start
     this.end = end
     this.width = end - start
 
-    this.subscribers.forEach(sub => {
-      sub.updateRange(start, end, eventTrigger)
-    })
+    this.notify()
   }
 }
 

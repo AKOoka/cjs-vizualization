@@ -1,14 +1,12 @@
-import { MouseActionControlls } from './MouseActionControlls.js'
 import { JobsDOMComposer } from './JobsDOMComposer.js'
 
 class JobsPlotter {
   constructor () {
     this.context = null
     this.model = null
+    this.plotterContainer = null
     this.domContainerProcessors = null
     this.jobsDomComposer = new JobsDOMComposer()
-    this.mouseActionControlls = new MouseActionControlls()
-    this.timeLine = null
     this.viewRange = null
     this.visibleRanges = null
     this.rangesAS = null
@@ -17,26 +15,20 @@ class JobsPlotter {
   setContext (context) {
     this.context = context
 
-    this.timeLine.setContext(context)
+    this.plotterContainer = this.createDomContainer()
+    this.context.jobsPlotter.append(this.plotterContainer)
   }
 
   setModel (model) {
     this.model = model
 
     this.jobsDomComposer.createDomModel(model)
-    this.mouseActionControlls.setModel(model)
-    this.timeLine.setModel(model)
-    this.createDomRange()
 
-    this.mouseActionControlls.setContext(this.domContainerProcessors)
+    this.createDomRange()
   }
 
   setViewRange (viewRange) {
     this.viewRange = viewRange
-  }
-
-  setTimeLine (timeLine) {
-    this.timeLine = timeLine
   }
 
   createDomContainer () {
@@ -81,17 +73,19 @@ class JobsPlotter {
 
       processor.append(rangeDom)
 
-      this.context.plotterContainer.append(processor)
-      this.context.processorLabelsDomContainer.append(processorLabel)
+      this.plotterContainer.append(processor)
+      this.context.processorLabelsContainer.append(processorLabel)
     }
   }
 
   createDomRange () {
     // private
-    const plotterContainer = this.createDomContainer()
+    if (this.plotterContainer.children.length > 0) {
+      const plotterContainer = this.createDomContainer()
 
-    this.context.plotterContainer.replaceWith(plotterContainer)
-    this.context.plotterContainer = plotterContainer
+      this.plotterContainer.replaceWith(plotterContainer)
+      this.plotterContainer = plotterContainer
+    }
 
     this.domContainerProcessors = new Map()
 
@@ -175,7 +169,7 @@ class JobsPlotter {
 
     this.watchDomChanges(startPos, endPos)
 
-    const containerWidth = this.context.plotterContainer.offsetWidth
+    const containerWidth = this.plotterContainer.offsetWidth
     const scaleFactor = 1 / this.viewRange.width
     const scaleWidthFactor = 1 / (timeSpan) * scaleFactor * containerWidth
     const translateFactor = this.viewRange.start * scaleFactor * containerWidth
@@ -184,6 +178,4 @@ class JobsPlotter {
   }
 }
 
-const jobsPlotter = new JobsPlotter()
-
-export { jobsPlotter }
+export { JobsPlotter }

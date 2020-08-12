@@ -1,19 +1,28 @@
 import { SummaryTimeBar } from './SummaryTimeBar.js'
 
 class TimeLine {
-  constructor (viewRange) {
-    this.viewRange = viewRange
+  constructor () {
+    this.viewRange = null
     this.context = null
     this.totalTimeSpan = null
     this.summaryTimeBar = null
+    this.timeMarkersContainer = null
+    this.timeLinesContainer = null
   }
 
   setContext (context) {
-    this.context = context
-
     this.summaryTimeBar = new SummaryTimeBar()
+    this.timeMarkersContainer = this.createTimeMarkersContainer()
+    this.timeLinesContainer = this.createTimeLinesContainer()
 
-    this.changeContext('summaryTimeBar', this.summaryTimeBar.summaryTimeBarDom)
+    this.context = context
+    this.context.timeLineInfo.append(this.summaryTimeBar.summaryTimeBarDom)
+    this.context.timeLineInfo.append(this.timeMarkersContainer)
+    this.context.jobsPlotter.append(this.timeLinesContainer)
+  }
+
+  setViewRange (viewRange) {
+    this.viewRange = viewRange
   }
 
   setModel (model) {
@@ -24,8 +33,12 @@ class TimeLine {
     this.summaryTimeBar.changeRangeTimeSpan(timeSpan)
     this.summaryTimeBar.changeTotalTime(timeSpan)
 
-    this.changeContext('timeMarkersContainer', this.createTimeMarkersContainer())
-    this.changeContext('timeLinesContainer', this.createTimeLinesContainer())
+    if (this.timeMarkersContainer.children.length > 0) {
+      this.changeContainer('timeMarkersContainer', this.createTimeMarkersContainer())
+    }
+    if (this.timeLinesContainer.children.length > 0) {
+      this.changeContainer('timeLinesContainer', this.createTimeLinesContainer())
+    }
 
     this.updateRange()
   }
@@ -46,9 +59,9 @@ class TimeLine {
     return timeLinesContainer
   }
 
-  changeContext (key, domValue) {
-    this.context[key].replaceWith(domValue)
-    this.context[key] = domValue
+  changeContainer (key, domValue) {
+    this[key].replaceWith(domValue)
+    this[key] = domValue
   }
 
   convertTime (time) {
@@ -89,14 +102,14 @@ class TimeLine {
   }
 
   updateRange () {
-    this.changeContext('timeLinesContainer', this.createTimeLinesContainer())
-    this.changeContext('timeMarkersContainer', this.createTimeMarkersContainer())
+    this.changeContainer('timeLinesContainer', this.createTimeLinesContainer())
+    this.changeContainer('timeMarkersContainer', this.createTimeMarkersContainer())
 
     const viewRangeTimeSpan = this.viewRange.width * this.totalTimeSpan
     const startTimeRange = this.viewRange.start * this.totalTimeSpan
     const endTimeRange = this.viewRange.end * this.totalTimeSpan
-    const a = (1 / this.viewRange.width) * this.context.timeMarkersContainer.offsetWidth / this.totalTimeSpan
-    const b = -this.viewRange.start * (1 / this.viewRange.width) * this.context.timeMarkersContainer.offsetWidth
+    const a = (1 / this.viewRange.width) * this.timeMarkersContainer.offsetWidth / this.totalTimeSpan
+    const b = -this.viewRange.start * (1 / this.viewRange.width) * this.timeMarkersContainer.offsetWidth
 
     const timeToPlotter = (time) => {
       return time * a + b
@@ -117,8 +130,8 @@ class TimeLine {
     let markerTime = Math.floor(startTimeRange / markerStep + 1) * markerStep
 
     for (markerTime; markerTime <= endTimeRange; markerTime += markerStep) {
-      this.context.timeMarkersContainer.append(this.createTimeMarker(this.convertTime(markerTime), timeToPlotter(markerTime)))
-      this.context.timeLinesContainer.append(this.createTimeLine(timeToPlotter(markerTime)))
+      this.timeMarkersContainer.append(this.createTimeMarker(this.convertTime(markerTime), timeToPlotter(markerTime)))
+      this.timeLinesContainer.append(this.createTimeLine(timeToPlotter(markerTime)))
     }
   }
 }

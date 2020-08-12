@@ -5,10 +5,10 @@ class MouseWheelController {
   }
 
   zoom (relMouseX, zoomDirection) {
-    const { domRoot } = this.context
+    const { jobsPlotter } = this.context
 
     const rangeWidth = this.viewRange.end - this.viewRange.start
-    const pivot = relMouseX / domRoot.offsetWidth
+    const pivot = relMouseX / jobsPlotter.offsetWidth
     const zoomVelocity = 0.1 * rangeWidth
 
     const startPos = Math.max(0, this.viewRange.start + zoomDirection * zoomVelocity * pivot * -1)
@@ -20,17 +20,17 @@ class MouseWheelController {
   setContext (context) {
     this.context = context
 
-    const { domRoot } = this.context
+    const { jobsPlotter } = this.context
 
-    domRoot.onwheel = event => {
+    jobsPlotter.onwheel = event => {
       event.preventDefault()
 
       let newRange = null
 
       if (event.deltaY < 0) {
-        newRange = this.zoom(event.clientX - domRoot.offsetLeft, -1)
+        newRange = this.zoom(event.clientX - jobsPlotter.offsetLeft, -1)
       } else if (event.deltaY > 0) {
-        newRange = this.zoom(event.clientX - domRoot.offsetLeft, 1)
+        newRange = this.zoom(event.clientX - jobsPlotter.offsetLeft, 1)
       }
 
       this.viewRange.setRange(newRange.startPos, newRange.endPos, this)
