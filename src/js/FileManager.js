@@ -40,19 +40,19 @@ class FileManager {
     return data
   }
 
-  setUpdateButtonEvent (model) {
+  setUpdateButtonEvent (eventListener) {
     this.jsonUpdateButton.onclick = async () => {
       const data = await this.readJson(this.jsonInput.files[0])
 
-      model.fetchData(data)
+      eventListener(data)
     }
   }
 
-  setJsonInputEvent (model) {
+  setJsonInputEvent (eventListener) {
     this.jsonInput.onchange = async () => {
       const data = await this.readJson(this.jsonInput.files[0])
 
-      model.fetchData(data)
+      eventListener(data)
     }
   }
 }

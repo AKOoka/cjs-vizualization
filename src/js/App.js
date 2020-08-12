@@ -83,8 +83,8 @@ class App {
     this.model.subscribe(this.timeLine)
 
     this.fileManager.setContext(this.context)
-    this.fileManager.setJsonInputEvent(this.model)
-    this.fileManager.setUpdateButtonEvent(this.model)
+    this.fileManager.setJsonInputEvent(this.model.fetchData.bind(this.model))
+    this.fileManager.setUpdateButtonEvent(this.model.fetchData.bind(this.model))
 
     this.viewRange.subscribe(this.jobsPlotter)
     this.viewRange.subscribe(this.slider)
