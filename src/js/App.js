@@ -60,13 +60,20 @@ class App {
     return fileManagerContext
   }
 
+  createStylesheetContext () {
+    const stylesheetContext = document.createElement('style')
+
+    return stylesheetContext
+  }
+
   setContextRoot (contextRoot) {
     this.context = {
       fileManager: this.createFileManagerContext(),
       jobsPlotter: this.createJobsPlotterContext(),
       timeLineInfo: this.createTimeLineInfoContext(),
       processorLabels: this.createProcessorLabelsContext(),
-      slider: this.createSliderContext()
+      slider: this.createSliderContext(),
+      stylesheet: this.createStylesheetContext()
     }
 
     this.contextRoot = contextRoot
@@ -75,7 +82,8 @@ class App {
       this.context.jobsPlotter,
       this.context.timeLineInfo,
       this.context.processorLabels,
-      this.context.slider
+      this.context.slider,
+      this.context.stylesheet
     )
 
     this.model.setModelProvider(parseData)

@@ -1,4 +1,5 @@
 import { JobsDomComposer } from './JobsDomComposer.js'
+import { MouseActionController } from './MouseActionController.js'
 
 class JobsPlotter {
   constructor () {
@@ -8,6 +9,7 @@ class JobsPlotter {
     this.processorsContainer = null
     this.processorLabelsContainer = null
     this.jobsDomComposer = new JobsDomComposer()
+    this.mouseActionController = new MouseActionController()
     this.viewRange = null
     this.visibleRanges = null
     this.rangesAS = null
@@ -21,6 +23,8 @@ class JobsPlotter {
 
     this.context.jobsPlotter.append(this.plotterContainer)
     this.context.processorLabels.append(this.processorLabelsContainer)
+
+    this.context.jobsPlotter.onwheel = this.zoomEventListener.bind(this)
   }
 
   setModel (model) {
@@ -34,6 +38,30 @@ class JobsPlotter {
 
   setViewRange (viewRange) {
     this.viewRange = viewRange
+  }
+
+  zoomRange (relMouseX, zoomDirection) {
+    const pivot = relMouseX / this.context.jobsPlotter.offsetWidth
+    const zoomVelocity = 0.1 * this.viewRange.width
+
+    const startPos = Math.max(0, this.viewRange.start + zoomDirection * zoomVelocity * pivot * -1)
+    const endPos = Math.min(1, this.viewRange.end + zoomDirection * zoomVelocity * (1 - pivot))
+
+    return { startPos, endPos }
+  }
+
+  zoomEventListener (event) {
+    event.preventDefault()
+
+    let newRange = null
+
+    if (event.deltaY < 0) {
+      newRange = this.zoomRange(event.clientX - this.context.jobsPlotter.offsetLeft, -1)
+    } else if (event.deltaY > 0) {
+      newRange = this.zoomRange(event.clientX - this.context.jobsPlotter.offsetLeft, 1)
+    }
+
+    this.viewRange.setRange(newRange.startPos, newRange.endPos)
   }
 
   createPlotterContainer () {

@@ -96,7 +96,10 @@ class Slider {
   }
 
   updateRange () {
-    this.drawSlider(this.viewRange.start * this.context.slider.offsetWidth, this.viewRange.end * this.context.slider.offsetWidth)
+    this.drawSlider(
+      this.viewRange.start * this.context.slider.offsetWidth,
+      this.viewRange.end * this.context.slider.offsetWidth
+    )
   }
 
   drawSlider (startPos, endPos) {
