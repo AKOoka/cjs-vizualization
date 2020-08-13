@@ -1,3 +1,3 @@
 import { app } from './App.js'
 
-app.setDomRoot(document.getElementById('app'))
+app.setContextRoot(document.getElementById('app'))

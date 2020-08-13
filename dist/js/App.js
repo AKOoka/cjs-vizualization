@@ -9,7 +9,7 @@ import { ViewRange } from './ViewRange.js'
 
 class App {
   constructor () {
-    this.domRoot = null
+    this.contextRoot = null
     this.context = null
     this.model = new ObservableModel()
     this.fileManager = new FileManager()
@@ -60,7 +60,7 @@ class App {
     return fileManagerContext
   }
 
-  setDomRoot (domRoot) {
+  setContextRoot (contextRoot) {
     this.context = {
       fileManager: this.createFileManagerContext(),
       jobsPlotter: this.createJobsPlotterContext(),
@@ -69,8 +69,8 @@ class App {
       slider: this.createSliderContext()
     }
 
-    this.domRoot = domRoot
-    this.domRoot.append(
+    this.contextRoot = contextRoot
+    this.contextRoot.append(
       this.context.fileManager,
       this.context.jobsPlotter,
       this.context.timeLineInfo,

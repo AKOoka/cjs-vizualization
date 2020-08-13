@@ -59,9 +59,9 @@ class TimeLine {
     return timeLinesContainer
   }
 
-  changeContainer (key, domValue) {
-    this[key].replaceWith(domValue)
-    this[key] = domValue
+  changeContainer (key, container) {
+    this[key].replaceWith(container)
+    this[key] = container
   }
 
   convertTime (time) {

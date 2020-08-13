@@ -73,6 +73,11 @@ class JobsPlotter {
     return processorLabelsContainer
   }
 
+  changeContainer (key, container) {
+    this[key].replaceWith(container)
+    this[key] = container
+  }
+
   appendRange (range, processorId) {
     // private
     const processor = this.processorsContainer.get(processorId)
@@ -95,17 +100,10 @@ class JobsPlotter {
   createRanges () {
     // private
     if (this.plotterContainer.children.length > 0) {
-      const plotterContainer = this.createPlotterContainer()
-
-      this.plotterContainer.replaceWith(plotterContainer)
-      this.plotterContainer = plotterContainer
+      this.changeContainer('plotterContainer', this.createPlotterContainer())
     }
-
     if (this.processorLabelsContainer.children.length > 0) {
-      const processorLabelsContainer = this.createProcessorLabelsContainer()
-
-      this.processorLabelsContainer.replaceWith(processorLabelsContainer)
-      this.processorLabelsContainer = processorLabelsContainer
+      this.changeContainer('processorLabelsContainer', this.createProcessorLabelsContainer())
     }
 
     this.processorsContainer = new Map()
