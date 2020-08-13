@@ -20,61 +20,61 @@ class App {
     this.viewRange = new ViewRange()
   }
 
-  createJobsPlotterDom () {
-    const jobsPlotterDom = document.createElement('section')
+  createJobsPlotterContext () {
+    const jobsPlotterContext = document.createElement('section')
 
-    jobsPlotterDom.id = 'jobs-plotter'
+    jobsPlotterContext.id = 'jobs-plotter'
 
-    return jobsPlotterDom
+    return jobsPlotterContext
   }
 
-  createTimeLineInfoDom () {
-    const timeLineInfoDom = document.createElement('section')
+  createTimeLineInfoContext () {
+    const timeLineInfoContext = document.createElement('section')
 
-    timeLineInfoDom.id = 'time-line-info'
+    timeLineInfoContext.id = 'time-line-info'
 
-    return timeLineInfoDom
+    return timeLineInfoContext
   }
 
-  createProcessorLabelsContainer () {
-    const processorLabelsContainer = document.createElement('section')
+  createProcessorLabelsContext () {
+    const processorLabelsContext = document.createElement('section')
 
-    processorLabelsContainer.id = 'processor-labels-container'
+    processorLabelsContext.id = 'processor-labels'
 
-    return processorLabelsContainer
+    return processorLabelsContext
   }
 
-  createSliderDom () {
-    const sliderDom = document.createElement('section')
+  createSliderContext () {
+    const sliderContext = document.createElement('section')
 
-    sliderDom.id = 'slider'
+    sliderContext.id = 'slider'
 
-    return sliderDom
+    return sliderContext
   }
 
-  createFileManagmentDom () {
-    const fileManagmentDom = document.createElement('section')
+  createFileManagerContext () {
+    const fileManagerContext = document.createElement('section')
 
-    fileManagmentDom.id = 'file-managment'
+    fileManagerContext.id = 'file-managment'
 
-    return fileManagmentDom
+    return fileManagerContext
   }
 
   setDomRoot (domRoot) {
     this.context = {
-      fileManagment: this.createFileManagmentDom(),
-      jobsPlotter: this.createJobsPlotterDom(),
-      processorLabelsDomContainer: this.createProcessorLabelsContainer(),
-      timeLineInfo: this.createTimeLineInfoDom(),
-      slider: this.createSliderDom()
+      fileManager: this.createFileManagerContext(),
+      jobsPlotter: this.createJobsPlotterContext(),
+      timeLineInfo: this.createTimeLineInfoContext(),
+      processorLabels: this.createProcessorLabelsContext(),
+      slider: this.createSliderContext()
     }
 
     this.domRoot = domRoot
     this.domRoot.append(
-      this.context.fileManagment,
+      this.context.fileManager,
       this.context.jobsPlotter,
-      this.context.processorLabelsDomContainer,
       this.context.timeLineInfo,
+      this.context.processorLabels,
       this.context.slider
     )
 
@@ -83,17 +83,23 @@ class App {
     this.model.subscribe(this.timeLine)
 
     this.fileManager.setContext(this.context)
-    this.fileManager.setJsonInputEvent(this.model.fetchData.bind(this.model))
-    this.fileManager.setUpdateButtonEvent(this.model.fetchData.bind(this.model))
+    this.fileManager.setJsonInputEvent({
+      fetchModelData: this.model.fetchData.bind(this.model),
+      setViewRange: this.viewRange.setRange.bind(this.viewRange)
+    })
+    this.fileManager.setUpdateButtonEvent({
+      fetchModelData: this.model.fetchData.bind(this.model),
+      setViewRange: this.viewRange.setRange.bind(this.viewRange)
+    })
 
     this.viewRange.subscribe(this.jobsPlotter)
+    this.viewRange.subscribe(this.timeLine)
     this.viewRange.subscribe(this.slider)
     // this.viewRange.subscribe(mouseWheelController)
-    this.viewRange.subscribe(this.timeLine)
 
     this.jobsPlotter.setViewRange(this.viewRange)
-    this.slider.setViewRange(this.viewRange)
     this.timeLine.setViewRange(this.viewRange)
+    this.slider.setViewRange(this.viewRange)
 
     this.jobsPlotter.setContext(this.context)
     this.timeLine.setContext(this.context)

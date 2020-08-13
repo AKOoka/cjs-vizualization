@@ -16,7 +16,7 @@ class TimeLine {
     this.timeLinesContainer = this.createTimeLinesContainer()
 
     this.context = context
-    this.context.timeLineInfo.append(this.summaryTimeBar.summaryTimeBarDom)
+    this.context.timeLineInfo.append(this.summaryTimeBar.summaryTimeBarContainer)
     this.context.timeLineInfo.append(this.timeMarkersContainer)
     this.context.jobsPlotter.append(this.timeLinesContainer)
   }
@@ -83,22 +83,22 @@ class TimeLine {
   }
 
   createTimeMarker (text, domPosition) {
-    const domTimeMarker = document.createElement('div')
+    const timeMarker = document.createElement('div')
 
-    domTimeMarker.classList.add('time-marker')
-    domTimeMarker.append(text)
-    domTimeMarker.style.left = `${domPosition}px`
+    timeMarker.classList.add('time-marker')
+    timeMarker.append(text)
+    timeMarker.style.left = `${domPosition}px`
 
-    return domTimeMarker
+    return timeMarker
   }
 
   createTimeLine (domPosition) {
-    const domTimeLine = document.createElement('div')
+    const timeLine = document.createElement('div')
 
-    domTimeLine.classList.add('time-line')
-    domTimeLine.style.left = `${domPosition}px`
+    timeLine.classList.add('time-line')
+    timeLine.style.left = `${domPosition}px`
 
-    return domTimeLine
+    return timeLine
   }
 
   updateRange () {

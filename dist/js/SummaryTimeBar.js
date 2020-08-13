@@ -1,31 +1,31 @@
 class SummaryTimeBar {
   constructor (rangeTime = 0, totalTime = 0, selectedTime = 0) {
-    this.rangeTimeSpanText = this.createTextDom(rangeTime)
-    this.totalTimeSpanText = this.createTextDom(totalTime)
-    this.selectedTimeSpanText = this.createTextDom(selectedTime)
+    this.rangeTimeSpan = this.createTimeSpan(rangeTime)
+    this.totalTimeSpan = this.createTimeSpan(totalTime)
+    this.selectedTimeSpan = this.createTimeSpan(selectedTime)
 
     this.timeSpansContainer = this.createTimeSpanContainer(
-      this.rangeTimeSpanText,
-      this.totalTimeSpanText,
-      this.selectedTimeSpanText
+      this.rangeTimeSpan,
+      this.totalTimeSpan,
+      this.selectedTimeSpan
     )
 
     this.startRange = this.createRangeTimeMarker()
     this.endRange = this.createRangeTimeMarker()
 
-    this.summaryTimeBarDom = this.createSummaryBarDom(
+    this.summaryTimeBarContainer = this.createSummaryTimeBarContainer(
       this.startRange,
       this.timeSpansContainer,
       this.endRange
     )
   }
 
-  createTextDom (text) {
-    const textDom = document.createElement('span')
+  createTimeSpan (time) {
+    const timeSpan = document.createElement('span')
 
-    textDom.append(text)
+    timeSpan.append(time)
 
-    return textDom
+    return timeSpan
   }
 
   createTimeSpanContainer (rangeTimeSpanTextDom, totalTimeSpanTextDom, selectedTimeSpanTextDom) {
@@ -38,20 +38,20 @@ class SummaryTimeBar {
   }
 
   createRangeTimeMarker () {
-    const rangeTimeMarkerDom = document.createElement('div')
+    const rangeTimeMarker = document.createElement('div')
 
-    rangeTimeMarkerDom.classList.add('summary-range-time-marker')
+    rangeTimeMarker.classList.add('summary-range-time-marker')
 
-    return rangeTimeMarkerDom
+    return rangeTimeMarker
   }
 
-  createSummaryBarDom (startRange, timeSpansContainer, endRange) {
-    const summaryBarDom = document.createElement('div')
+  createSummaryTimeBarContainer (startRange, timeSpansContainer, endRange) {
+    const summaryTimeBarContainer = document.createElement('div')
 
-    summaryBarDom.id = 'summary-time-bar'
-    summaryBarDom.append(startRange, timeSpansContainer, endRange)
+    summaryTimeBarContainer.id = 'summary-time-bar'
+    summaryTimeBarContainer.append(startRange, timeSpansContainer, endRange)
 
-    return summaryBarDom
+    return summaryTimeBarContainer
   }
 
   changeStartRangeTime (time) {
@@ -63,15 +63,15 @@ class SummaryTimeBar {
   }
 
   changeRangeTimeSpan (time) {
-    this.rangeTimeSpanText.textContent = time
+    this.rangeTimeSpan.textContent = time
   }
 
   changeTotalTime (time) {
-    this.totalTimeSpanText.textContent = time
+    this.totalTimeSpan.textContent = time
   }
 
   changeSelectedTime (time) {
-    this.selectedTimeSpanText.textContent = time
+    this.selectedTimeSpan.textContent = time
   }
 }
 

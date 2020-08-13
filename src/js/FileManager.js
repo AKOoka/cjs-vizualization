@@ -29,7 +29,7 @@ class FileManager {
     this.jsonUpdateButton = this.createJsonUpdateButton()
     this.jsonInput = this.createJsonInput()
 
-    this.context.fileManagment.append(this.jsonUpdateButton, this.jsonInput)
+    this.context.fileManager.append(this.jsonUpdateButton, this.jsonInput)
   }
 
   async readJson (jsonFile) {
@@ -40,19 +40,21 @@ class FileManager {
     return data
   }
 
-  setUpdateButtonEvent (eventListener) {
+  setUpdateButtonEvent (eventListeners) {
     this.jsonUpdateButton.onclick = async () => {
       const data = await this.readJson(this.jsonInput.files[0])
 
-      eventListener(data)
+      eventListeners.fetchModelData(data)
+      eventListeners.setViewRange(0, 1)
     }
   }
 
-  setJsonInputEvent (eventListener) {
+  setJsonInputEvent (eventListeners) {
     this.jsonInput.onchange = async () => {
       const data = await this.readJson(this.jsonInput.files[0])
 
-      eventListener(data)
+      eventListeners.fetchModelData(data)
+      eventListeners.setViewRange(0, 1)
     }
   }
 }

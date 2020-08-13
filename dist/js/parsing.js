@@ -1,15 +1,3 @@
-// function toStringObject (obj) {
-//   let outputString = '\n{\n'
-
-//   Object.entries(obj).forEach(([key, value]) => {
-//     outputString += `\t${key}: ${value}\n`
-//   })
-
-//   outputString += '}\n'
-
-//   return outputString
-// }
-
 function readJobRegProfileData (storage, data) {
   data.forEach(({ jobId, name }) => {
     storage.set(jobId, { name, ranges: [] })
@@ -22,68 +10,23 @@ function readRangeData (jobRecords, jobRanges, data) {
   // it should be sorted before going through
 
   data.forEach(({ job, processorId, timestamp }) => {
-    const jobRanges = jobRecords.get(job).ranges
-    const rangeCounter = jobRanges.length
+    const jobRecordsRanges = jobRecords.get(job).ranges
+    const rangeCounter = jobRecordsRanges.length
 
     if (openRange.has(job)) {
-      jobRanges[rangeCounter - 1].endTimestamp = timestamp
+      jobRecordsRanges[rangeCounter - 1].endTimestamp = timestamp
 
       openRange.delete(job)
 
       return
     }
 
-    // const processor = jobRanges.get(processorId)
-    // const processorRange = { job, rangeCounter }
-
-    // if (!processor) {
-    //   jobRanges.set(processorId, [processorRange])
-    // } else {
-    //   processor.push(processorRange)
-    // }
-
     jobRanges.push({ job, rangeCounter })
 
-    jobRanges.push({ beginTimestamp: timestamp, processorId })
+    jobRecordsRanges.push({ beginTimestamp: timestamp, processorId })
 
     openRange.add(job)
   })
-
-  // console.log(data)
-  // const sortedData = data.sort((a, b) => a.processorId - b.processorId)
-  // console.log(sortedData)
-
-  // for (let i = 0; i < data.length / 2; i += 2) {
-  //   const cur = data[i]
-  //   const next = data[i + 1]
-
-  //   if (cur.job === next.job) {
-  //     const processorRange = {
-  //       jobId: cur.job
-  //     }
-
-  //     const processor = jobRanges.get(cur.processorId)
-
-  //     if (!processor) {
-  //       processorRange.rangeCounter = 0
-
-  //       jobRanges.set(cur.processorId, [processorRange])
-  //     } else {
-  //       processorRange.rangeCounter = processor.length
-
-  //       processor.push(processorRange)
-  //     }
-
-  //     jobRecords.get(cur.job).ranges.push({
-  //       beginTimestamp: cur.timestamp,
-  //       endTimestamp: next.timestamp
-  //     })
-  //   } else {
-  //     alert ('Different jobIds for one range')
-
-  //     throw new Error(`\n ${jobRecords.get(cur.job).name}: ${toStringObject(cur)};\n ${jobsMap.get(next.job).name}: ${toStringObject(next)};`)
-  //   }
-  // }
 }
 
 function readJobSpawnsData (storage, data) {
@@ -125,7 +68,7 @@ function parseData ({
     endTime: rangeBeginEndEventProfileData[rangeBeginEndEventProfileData.length - 1].timestamp,
     timeSpan: rangeBeginEndEventProfileData[rangeBeginEndEventProfileData.length - 1].timestamp - rangeBeginEndEventProfileData[0].timestamp
   }
-  const jobRanges = [] // is broken
+  const jobRanges = []
   const jobRecords = new Map()
   const spawnedJobs = new Map()
   const atomicCounterRecords = new Map()

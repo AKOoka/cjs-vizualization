@@ -2,7 +2,7 @@ class ViewRange {
   constructor () {
     this.start = 0
     this.end = 1
-    this.width = 0
+    this.width = 1
     this.subscribers = []
   }
 

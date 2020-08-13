@@ -1,4 +1,4 @@
-function convertHSVToRGB (hue, saturation, value) {
+function convertHsvToRgb (hue, saturation, value) {
   const h = hue / 360
   const s = saturation / 100
   const v = value / 100
@@ -54,7 +54,7 @@ function convertHSVToRGB (hue, saturation, value) {
   return `${Math.round(r * 255)}, ${Math.round(g * 255)}, ${Math.round(b * 255)}`
 }
 
-class JobsDOMComposer {
+class JobsDomComposer {
   constructor () {
     this.jobsDomModel = null
   }
@@ -86,7 +86,7 @@ class JobsDOMComposer {
         }
       }
 
-      jobColors.set(sortedJobNames[i], convertHSVToRGB(hue, saturation, value))
+      jobColors.set(sortedJobNames[i], convertHsvToRgb(hue, saturation, value))
     }
 
     return jobColors
@@ -101,26 +101,26 @@ class JobsDOMComposer {
       const { name, ranges } = model.jobRecords.get(job)
       const { beginTimestamp, endTimestamp, processorId } = ranges[rangeCounter]
 
-      const rangeDom = document.createElement('div')
+      const range = document.createElement('div')
       const rangeWidth = endTimestamp - beginTimestamp
 
-      rangeDom.textContent = name
+      range.textContent = name
 
-      rangeDom.classList.add(`job-${job}`)
-      rangeDom.classList.add('range')
-      rangeDom.classList.add(`range-${rangeCounter}`)
-      rangeDom.title = name
-      rangeDom.style.left = `${beginTimestamp}px`
-      rangeDom.style.width = `${rangeWidth}px`
-      rangeDom.style.backgroundColor = `rgb(${jobColors.get(name)})`
+      range.classList.add(`job-${job}`)
+      range.classList.add('range')
+      range.classList.add(`range-${rangeCounter}`)
+      range.title = name
+      range.style.left = `${beginTimestamp}px`
+      range.style.width = `${rangeWidth}px`
+      range.style.backgroundColor = `rgb(${jobColors.get(name)})`
 
       if (rangeWidth <= 40) {
-        rangeDom.classList.add('hiddeText')
+        range.classList.add('hiddeText')
       }
 
-      this.jobsDomModel.push({ processorId, rangeDom })
+      this.jobsDomModel.push({ processorId, range })
     }
   }
 }
 
-export { JobsDOMComposer }
+export { JobsDomComposer }

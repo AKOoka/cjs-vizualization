@@ -1,4 +1,4 @@
-function convertHSVToRGB (hue, saturation, value) {
+function convertHsvToRgb (hue, saturation, value) {
   const h = hue / 360
   const s = saturation / 100
   const v = value / 100
@@ -54,7 +54,7 @@ function convertHSVToRGB (hue, saturation, value) {
   return `${Math.round(r * 255)}, ${Math.round(g * 255)}, ${Math.round(b * 255)}`
 }
 
-class JobsDOMComposer {
+class JobsDomComposer {
   constructor () {
     this.jobsDomModel = null
   }
@@ -86,7 +86,7 @@ class JobsDOMComposer {
         }
       }
 
-      jobColors.set(sortedJobNames[i], convertHSVToRGB(hue, saturation, value))
+      jobColors.set(sortedJobNames[i], convertHsvToRgb(hue, saturation, value))
     }
 
     return jobColors
@@ -123,4 +123,4 @@ class JobsDOMComposer {
   }
 }
 
-export { JobsDOMComposer }
+export { JobsDomComposer }
