@@ -1,10 +1,16 @@
 class StylesheetManager {
   constructor () {
-    this.stylesheet = document.querySelector('#range-styles')
+    this.context = null
+  }
+
+  setContext (context) {
+    this.context = context
   }
 
   changeStyleForJob (jobId) {
-    this.stylesheet.sheet.insertRule(`.job-${jobId}.range { filter: brightness(80%); border: 2px dashed black; color: white; font-weight: bold; }`, 0)
+    const rule = `.job-${jobId}.range { filter: brightness(80%); border: 2px dashed black; color: white; font-weight: bold; }`
+
+    this.context.stylesheet.sheet.insertRule(rule, 0)
     console.log(this.stylesheet.sheet)
   }
 
@@ -14,7 +20,7 @@ class StylesheetManager {
 
   removeStyleOfJob (jobId) {
     // there is weird behaviour of deleteRule - it deletes first rule if doesn't find rule that was searched
-    this.stylesheet.sheet.deleteRule(`.job-${jobId}.range`)
+    this.context.stylesheet.sheet.deleteRule(`.job-${jobId}.range`)
   }
 }
 

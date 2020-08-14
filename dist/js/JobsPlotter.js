@@ -34,6 +34,9 @@ class JobsPlotter {
 
     this.createRanges()
     this.updateRange()
+
+    this.mouseActionController.setContext(this.context, this.processorsContainer)
+    this.mouseActionController.setModel(model)
   }
 
   setViewRange (viewRange) {
@@ -87,7 +90,7 @@ class JobsPlotter {
     const processorLabel = document.createElement('div')
 
     processorLabel.classList.add('processor-label')
-    processorLabel.append(`core-#${processorId}`)
+    processorLabel.append(`core #${processorId}`)
 
     return processorLabel
   }
@@ -113,15 +116,11 @@ class JobsPlotter {
     if (processor) {
       processor.append(range)
     } else {
-      const processor = this.createProcessor()
-      const processorLabel = this.createProcessorLabel(processorId)
+      const newProcessor = this.createProcessor()
 
-      this.processorsContainer.set(processorId, processor)
+      newProcessor.append(range)
 
-      processor.append(range)
-
-      this.plotterContainer.append(processor)
-      this.processorLabelsContainer.append(processorLabel)
+      this.processorsContainer.set(processorId, newProcessor)
     }
   }
 
@@ -149,6 +148,15 @@ class JobsPlotter {
       this.appendRange(range, processorId)
       this.visibleRanges.push({ index, processorId })
     })
+
+    const sortedProcessorsContainer = [...this.processorsContainer.entries()].sort(([k1], [k2]) => k1 - k2)
+
+    for (const [processorId, processor] of sortedProcessorsContainer) {
+      const processorLabel = this.createProcessorLabel(processorId)
+
+      this.plotterContainer.append(processor)
+      this.processorLabelsContainer.append(processorLabel)
+    }
   }
 
   watchRangeChanges (startPos, endPos) {

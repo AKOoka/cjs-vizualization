@@ -1,54 +1,51 @@
 class ContextualMenu {
   constructor () {
-    this.menuDOM = null
-    this.menuDOMActive = false
+    this.menu = null
+    this.menuIsAcitve = false
   }
 
   showMenu ({ pageX, pageY }) {
-    this.menuDOM.style.left = `${pageX}px`
-    this.menuDOM.style.top = `${pageY}px`
+    this.menu.style.left = `${pageX}px`
+    this.menu.style.top = `${pageY}px`
 
-    document.body.append(this.menuDOM)
+    document.body.append(this.menu)
 
-    this.menuDOMActive = true
+    this.menuIsAcitve = true
   }
 
   hideMenu () {
-    if (this.menuDOMActive) {
-      this.menuDOM.remove()
+    if (this.menuIsAcitve) {
+      this.menu.remove()
     }
   }
 
   createMenuDOM ({ showJobRangesListener, showJobSpawnsListener, showAtomicCounterListener, hideDependencesListener }) {
-    const menuDOM = document.createElement('section')
+    const menu = document.createElement('section')
 
-    menuDOM.oncontextmenu = event => {
+    menu.oncontextmenu = event => {
       event.preventDefault()
+
+      this.hideMenu()
     }
 
-    menuDOM.classList.add('plotter-menu')
+    menu.classList.add('plotter-menu')
 
-    const showJobRangesButton = this.createMenuOptionDOM('Select Job', showJobRangesListener)
-    const showJobSpawnsButton = this.createMenuOptionDOM('Show Job Spawns', showJobSpawnsListener)
-    const showAtomicCounterButton = this.createMenuOptionDOM('Show Atomic Counters', showAtomicCounterListener)
-    const hideDependencesButton = this.createMenuOptionDOM('Hide Job Dependences', hideDependencesListener)
+    menu.append(this.createMenuOption('Select Job', showJobRangesListener))
+    menu.append(this.createMenuOption('Show Job Spawns', showJobSpawnsListener))
+    menu.append(this.createMenuOption('Show Atomic Counters', showAtomicCounterListener))
+    menu.append(this.createMenuOption('Hide Job Dependences', hideDependencesListener))
 
-    menuDOM.append(showJobRangesButton)
-    menuDOM.append(showJobSpawnsButton)
-    menuDOM.append(showAtomicCounterButton)
-    menuDOM.append(hideDependencesButton)
-
-    this.menuDOM = menuDOM
+    this.menu = menu
   }
 
-  createMenuOptionDOM (text, eventListener) {
-    const menuOptionDOM = document.createElement('button')
+  createMenuOption (text, eventListener) {
+    const menuOption = document.createElement('button')
 
-    menuOptionDOM.classList.add('plotter-menu__option')
-    menuOptionDOM.textContent = text
-    menuOptionDOM.onclick = eventListener
+    menuOption.classList.add('plotter-menu__option')
+    menuOption.textContent = text
+    menuOption.onclick = eventListener
 
-    return menuOptionDOM
+    return menuOption
   }
 }
 
