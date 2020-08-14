@@ -10,7 +10,7 @@ class MouseActionController {
   }
 
   setContext (context, processorsContainer) {
-    this.contextualMenu.setContext(context)
+    this.stylesheetManager.setContext(context)
 
     for (const processor of processorsContainer.values()) {
       processor.oncontextmenu = this.showContextualMenu.bind(this)
@@ -19,7 +19,7 @@ class MouseActionController {
   }
 
   setModel (model) {
-    this.contextualMenu.createMenuDOM({
+    this.contextualMenu.createMenu({
       showJobRangesListener: this.showJobRanges.bind(this),
       showJobSpawnsListener: this.showJobSpawns.bind(this, model),
       showAtomicCounterListener: this.showAtomicCounter.bind(this, model),

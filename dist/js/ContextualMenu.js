@@ -19,7 +19,7 @@ class ContextualMenu {
     }
   }
 
-  createMenuDOM ({ showJobRangesListener, showJobSpawnsListener, showAtomicCounterListener, hideDependencesListener }) {
+  createMenu ({ showJobRangesListener, showJobSpawnsListener, showAtomicCounterListener, hideDependencesListener }) {
     const menu = document.createElement('section')
 
     menu.oncontextmenu = event => {

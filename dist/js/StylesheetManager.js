@@ -11,7 +11,7 @@ class StylesheetManager {
     const rule = `.job-${jobId}.range { filter: brightness(80%); border: 2px dashed black; color: white; font-weight: bold; }`
 
     this.context.stylesheet.sheet.insertRule(rule, 0)
-    console.log(this.stylesheet.sheet)
+    console.log(this.context.stylesheet.sheet)
   }
 
   changeStyleForAtomicCounter (acId) {
