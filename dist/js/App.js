@@ -4,8 +4,9 @@ import { FileManager } from './FileManager.js'
 import { JobsPlotter } from './JobsPlotter.js'
 import { TimeLine } from './TimeLine.js'
 import { Slider } from './Slider.js'
-import { Mouse } from './Mouse.js'
+import { MouseEventManager } from './MouseEventManager.js'
 import { ViewRange } from './ViewRange.js'
+// import { MouseArea } from './MouseArea.js'
 
 class App {
   constructor () {
@@ -16,7 +17,7 @@ class App {
     this.jobsPlotter = new JobsPlotter()
     this.timeLine = new TimeLine()
     this.slider = new Slider()
-    this.mouse = new Mouse()
+    this.mouseEventManager = new MouseEventManager()
     this.viewRange = new ViewRange()
   }
 
@@ -91,6 +92,11 @@ class App {
     this.model.subscribe(this.timeLine)
 
     this.fileManager.setContext(this.context)
+    this.jobsPlotter.setContext(this.context)
+    this.timeLine.setContext(this.context)
+    this.slider.setContext(this.context)
+    this.mouseEventManager.setContext()
+
     this.fileManager.setJsonInputEvent({
       fetchModelData: this.model.fetchData.bind(this.model),
       setViewRange: this.viewRange.setRange.bind(this.viewRange)
@@ -100,20 +106,29 @@ class App {
       setViewRange: this.viewRange.setRange.bind(this.viewRange)
     })
 
-    this.viewRange.subscribe(this.jobsPlotter)
-    this.viewRange.subscribe(this.timeLine)
-    this.viewRange.subscribe(this.slider)
-    // this.viewRange.subscribe(mouseWheelController)
-
     this.jobsPlotter.setViewRange(this.viewRange)
     this.timeLine.setViewRange(this.viewRange)
     this.slider.setViewRange(this.viewRange)
 
-    this.jobsPlotter.setContext(this.context)
-    this.timeLine.setContext(this.context)
-    this.slider.setContext(this.context)
+    this.viewRange.subscribe(this.jobsPlotter)
+    this.viewRange.subscribe(this.timeLine)
+    this.viewRange.subscribe(this.slider)
+
+    // test starts
+    // const plotterArea = new MouseArea(
+    //   this.context.jobsPlotter,
+    //   (s) => { console.log('down', s) },
+    //   (s) => { console.log('move', s) },
+    //   (s) => { console.log('up', s) }
+    // )
+    // this.mouseEventManager.subscribe(plotterArea)
+    // test ends
 
     console.log(this)
+  }
+
+  getMouseEventManager () {
+    return this.mouseEventManager
   }
 }
 

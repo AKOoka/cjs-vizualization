@@ -18,6 +18,7 @@ Web.config
 
 v16/
 config/
+dist/
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs

@@ -1,3 +1,6 @@
+import { MouseArea } from './MouseArea.js'
+import { app } from './App.js'
+
 class Slider {
   constructor (anchorWidth = 4) {
     this.context = null
@@ -49,9 +52,36 @@ class Slider {
   setContext (context) {
     this.context = context
 
-    this.startAnchor = this.createSliderSideAnchorDom('start', 0, onMousedown)
+    this.startAnchor = this.createSliderSideAnchorDom('start', 0, () => {})
     this.endAnchor = this.createSliderSideAnchorDom('end', this.context.slider.offsetWidth, onMousedown)
     this.centerAnchor = this.createSliderCenterAnchorDom(0, 0, onMousedown)
+
+    // test start
+    this.startAnchorIsDragged = false
+
+    const mousedown = (mouseState) => {
+      this.startAnchorIsDragged = true
+      console.log('down')
+    }
+    const mousemove = (mouseState) => {
+      const target = mouseState.getX() - this.context.slider.offsetLeft
+
+      this.moveRangeTo(target)
+
+      this.lastTarget = target
+
+      console.log('move', target)
+    }
+    const mouseup = (mouseState) => {
+      this.startAnchorIsDragged = false
+
+      console.log('up')
+    }
+
+    this.startAnchorMouseArea = new MouseArea(this.startAnchor, mousedown, mousemove, mouseup)
+
+    app.getMouseEventManager().subscribe(this.startAnchorMouseArea)
+    // test ends
 
     this.context.slider.append(this.startAnchor)
     this.context.slider.append(this.centerAnchor)
@@ -75,7 +105,7 @@ class Slider {
     let startPos = parseInt(this.startAnchor.style.left)
     let endPos = parseInt(this.endAnchor.style.left)
 
-    if (this.dragged === 'start-slider') {
+    if (this.startAnchorIsDragged) {
       startPos = Math.max(0, Math.min(target, endPos - this.anchorHalfWidth))
     } else if (this.dragged === 'end-slider') {
       endPos = Math.min(this.context.slider.offsetWidth, Math.max(target, startPos + this.anchorHalfWidth))
