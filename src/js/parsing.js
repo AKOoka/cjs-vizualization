@@ -1,6 +1,14 @@
-function readJobRegProfileData (storage, data) {
+import { Time } from './Time.js'
+
+function readJobRegProfileData (jobRecords, data) {
   data.forEach(({ jobId, name }) => {
-    storage.set(jobId, { name, ranges: [] })
+    jobRecords.set(jobId, {
+      name,
+      ranges: [],
+      meta: {
+        timeSpan: new Time(0)
+      }
+    })
   })
 }
 
@@ -10,11 +18,15 @@ function readRangeData (jobRecords, jobRanges, data) {
   // it should be sorted before going through
 
   data.forEach(({ job, processorId, timestamp }) => {
-    const jobRecordsRanges = jobRecords.get(job).ranges
-    const rangeCounter = jobRecordsRanges.length
+    const jobRecord = jobRecords.get(job)
+    const rangeCounter = jobRecord.ranges.length
 
     if (openRange.has(job)) {
-      jobRecordsRanges[rangeCounter - 1].endTimestamp = timestamp
+      const range = jobRecord.ranges[rangeCounter - 1]
+
+      range.endTimestamp = timestamp
+
+      jobRecord.meta.timeSpan.addTime(range.endTimestamp - range.beginTimestamp)
 
       openRange.delete(job)
 
@@ -23,7 +35,7 @@ function readRangeData (jobRecords, jobRanges, data) {
 
     jobRanges.push({ job, rangeCounter })
 
-    jobRecordsRanges.push({ beginTimestamp: timestamp, processorId })
+    jobRecord.ranges.push({ beginTimestamp: timestamp, processorId })
 
     openRange.add(job)
   })
@@ -64,9 +76,9 @@ function parseData ({
   rangeBeginEndEventProfileData
 }) {
   const meta = {
-    startTime: rangeBeginEndEventProfileData[0].timestamp,
-    endTime: rangeBeginEndEventProfileData[rangeBeginEndEventProfileData.length - 1].timestamp,
-    timeSpan: rangeBeginEndEventProfileData[rangeBeginEndEventProfileData.length - 1].timestamp - rangeBeginEndEventProfileData[0].timestamp
+    startTime: new Time(rangeBeginEndEventProfileData[0].timestamp),
+    endTime: new Time(rangeBeginEndEventProfileData[rangeBeginEndEventProfileData.length - 1].timestamp),
+    timeSpan: new Time(rangeBeginEndEventProfileData[rangeBeginEndEventProfileData.length - 1].timestamp - rangeBeginEndEventProfileData[0].timestamp)
   }
   const jobRanges = []
   const jobRecords = new Map()

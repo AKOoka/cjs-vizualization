@@ -1,6 +1,3 @@
-import { MouseArea } from './MouseArea.js'
-import { app } from './App.js'
-
 class FileManager {
   constructor () {
     this.context = null
@@ -44,29 +41,21 @@ class FileManager {
   }
 
   setUpdateButtonEvent (eventListeners) {
-    const jsonUpdateButtonMouseArea = new MouseArea(this.jsonUpdateButton)
-
-    jsonUpdateButtonMouseArea.setClick(async () => {
+    this.jsonUpdateButton.onclick = async () => {
       const data = await this.readJson(this.jsonInput.files[0])
 
       eventListeners.fetchModelData(data)
       eventListeners.setViewRange(0, 1)
-    })
-
-    app.getMouseEventManager().subscribe(jsonUpdateButtonMouseArea)
+    }
   }
 
   setJsonInputEvent (eventListeners) {
-    const jsonInputMouseArea = new MouseArea(this.jsonInput)
-
-    jsonInputMouseArea.setChange(async () => {
+    this.jsonInput.onchange = async () => {
       const data = await this.readJson(this.jsonInput.files[0])
 
       eventListeners.fetchModelData(data)
       eventListeners.setViewRange(0, 1)
-    })
-
-    app.getMouseEventManager().subscribe(jsonInputMouseArea)
+    }
   }
 }
 

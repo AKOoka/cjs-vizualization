@@ -7,7 +7,6 @@ class MouseArea {
     onWheel = () => {},
     onContextMenu = () => {},
     onClick = () => {},
-    onChange = () => {}
   ) {
     this.domElementOwner = domElementOwner
     this.onMouseDown = onMouseDown
@@ -16,7 +15,6 @@ class MouseArea {
     this.onWheel = onWheel
     this.onContextMenu = onContextMenu
     this.onClick = onClick
-    this.onChange = onChange
   }
 
   getDomElementOwner () {
@@ -45,10 +43,6 @@ class MouseArea {
 
   setClick (eventListener) {
     this.onClick = eventListener
-  }
-
-  setChange (eventListener) {
-    this.onChange = eventListener
   }
 }
 

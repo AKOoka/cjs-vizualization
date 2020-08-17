@@ -216,7 +216,8 @@ class JobsPlotter {
       return
     }
 
-    const { startTime, timeSpan } = this.model.meta
+    const startTime = this.model.meta.startTime.getTime()
+    const timeSpan = this.model.meta.timeSpan.getTime()
     const startPos = this.viewRange.start * timeSpan + startTime
     const endPos = this.viewRange.end * timeSpan + startTime
 

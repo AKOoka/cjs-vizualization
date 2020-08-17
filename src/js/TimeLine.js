@@ -1,4 +1,5 @@
 import { SummaryTimeBar } from './SummaryTimeBar.js'
+import { Time } from './Time.js'
 
 class TimeLine {
   constructor () {
@@ -26,9 +27,9 @@ class TimeLine {
   }
 
   setModel (model) {
-    const timeSpan = this.convertTime(model.meta.timeSpan)
+    const timeSpan = model.meta.timeSpan.convertTime()
 
-    this.totalTimeSpan = model.meta.timeSpan
+    this.totalTimeSpan = model.meta.timeSpan.getTime()
 
     this.summaryTimeBar.changeRangeTimeSpan(timeSpan)
     this.summaryTimeBar.changeTotalTime(timeSpan)
@@ -64,24 +65,6 @@ class TimeLine {
     this[key] = container
   }
 
-  convertTime (time) {
-    let outputTime = time
-
-    if (time <= 100) {
-      outputTime = outputTime.toString() + 'μs'
-    } else if (time > 100 && time <= 1000) {
-      outputTime = (outputTime / 1000).toFixed(2).toString() + 'ms'
-    } else if (time > 1000 && time <= 100000) {
-      outputTime = Math.round(outputTime / 1000).toString() + 'ms'
-    } else if (time > 100000 && time <= 1000000) {
-      outputTime = (outputTime / 1000000).toFixed(2).toString() + 's'
-    } else if (time > 1000000) {
-      outputTime = Math.round(outputTime / 1000000).toString() + 's'
-    }
-
-    return outputTime
-  }
-
   createTimeMarker (text, domPosition) {
     const timeMarker = document.createElement('div')
 
@@ -115,9 +98,9 @@ class TimeLine {
       return time * a + b
     }
 
-    this.summaryTimeBar.changeRangeTimeSpan(this.convertTime(viewRangeTimeSpan))
-    this.summaryTimeBar.changeStartRangeTime(this.convertTime(startTimeRange))
-    this.summaryTimeBar.changeEndRangeTime(this.convertTime(endTimeRange))
+    this.summaryTimeBar.changeRangeTimeSpan(new Time(viewRangeTimeSpan).convertTime())
+    this.summaryTimeBar.changeStartRangeTime(new Time(startTimeRange).convertTime())
+    this.summaryTimeBar.changeEndRangeTime(new Time(endTimeRange).convertTime())
 
     const markerCond = viewRangeTimeSpan / 26
 
@@ -130,7 +113,7 @@ class TimeLine {
     let markerTime = Math.floor(startTimeRange / markerStep + 1) * markerStep
 
     for (markerTime; markerTime <= endTimeRange; markerTime += markerStep) {
-      this.timeMarkersContainer.append(this.createTimeMarker(this.convertTime(markerTime), timeToPlotter(markerTime)))
+      this.timeMarkersContainer.append(this.createTimeMarker(new Time(markerTime).convertTime(), timeToPlotter(markerTime)))
       this.timeLinesContainer.append(this.createTimeLine(timeToPlotter(markerTime)))
     }
   }

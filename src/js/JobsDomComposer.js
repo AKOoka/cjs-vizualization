@@ -98,7 +98,7 @@ class JobsDomComposer {
     this.jobsDomModel = []
 
     for (const { job, rangeCounter } of model.jobRanges.values()) {
-      const { name, ranges } = model.jobRecords.get(job)
+      const { name, ranges, meta } = model.jobRecords.get(job)
       const { beginTimestamp, endTimestamp, processorId } = ranges[rangeCounter]
 
       const range = document.createElement('div')
@@ -109,7 +109,7 @@ class JobsDomComposer {
       range.classList.add(`job-${job}`)
       range.classList.add('range')
       range.classList.add(`range-${rangeCounter}`)
-      range.title = name
+      range.title = `name: ${name}\njob time span: ${meta.timeSpan.convertTime()}`
       range.style.left = `${beginTimestamp}px`
       range.style.width = `${rangeWidth}px`
       range.style.backgroundColor = `rgb(${jobColors.get(name)})`

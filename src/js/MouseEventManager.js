@@ -29,9 +29,6 @@ class MouseEventManager {
     mouseArea.getDomElementOwner().onclick = event => {
       mouseArea.onClick(MouseState.getMouseState(event))
     }
-    mouseArea.getDomElementOwner().onchange = event => {
-      mouseArea.onChange(MouseState.getMouseState(event))
-    }
   }
 
   onMouseMoveWorker (event) {
