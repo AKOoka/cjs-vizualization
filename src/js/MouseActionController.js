@@ -1,5 +1,7 @@
 import { ContextualMenu } from './ContextualMenu.js'
 import { StylesheetManager } from './StylesheetManager.js'
+import { MouseArea } from './MouseArea.js'
+import { app } from './App.js'
 
 class MouseActionController {
   constructor () {
@@ -13,8 +15,27 @@ class MouseActionController {
     this.stylesheetManager.setContext(context)
 
     for (const processor of processorsContainer.values()) {
-      processor.oncontextmenu = this.showContextualMenu.bind(this)
-      processor.onmousedown = this.mouseSelection.bind(this)
+      const processorMouseArea = new MouseArea(processor)
+
+      processorMouseArea.setContextMenu(mouseState => {
+        this.contextualMenu.hideMenu()
+        this.contextualMenu.showMenu(mouseState)
+      })
+      processorMouseArea.setMouseDown(mouseState => {
+        const isRange = mouseState.getTarget().className.includes('range')
+
+        this.contextualMenu.hideMenu()
+
+        if (mouseState.getCtrlKey() && isRange) {
+          this.deselectJob(mouseState.getTarget())
+        } else if (isRange) {
+          this.selectJob(mouseState.getTarget())
+        } else {
+          this.deselectAllJobs()
+        }
+      })
+
+      app.getMouseEventManager().subscribe(processorMouseArea)
     }
   }
 
@@ -25,27 +46,6 @@ class MouseActionController {
       showAtomicCounterListener: this.showAtomicCounter.bind(this, model),
       hideDependencesListener: this.hideDependences.bind(this)
     })
-  }
-
-  showContextualMenu (event) {
-    event.preventDefault()
-
-    this.contextualMenu.hideMenu()
-    this.contextualMenu.showMenu(event)
-  }
-
-  mouseSelection ({ ctrlKey, target }) {
-    const isRange = target.className.includes('range')
-
-    this.contextualMenu.hideMenu()
-
-    if (ctrlKey && isRange) {
-      this.deselectJob(target)
-    } else if (isRange) {
-      this.selectJob(target)
-    } else {
-      this.deselectAllJobs()
-    }
   }
 
   getIndex (job) {

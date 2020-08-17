@@ -16,6 +16,22 @@ class MouseEventManager {
 
       this.activeElements.push(mouseArea)
     }
+    mouseArea.getDomElementOwner().onwheel = event => {
+      event.preventDefault()
+
+      mouseArea.onWheel(MouseState.getMouseState(event))
+    }
+    mouseArea.getDomElementOwner().oncontextmenu = event => {
+      event.preventDefault()
+
+      mouseArea.onContextMenu(MouseState.getMouseState(event))
+    }
+    mouseArea.getDomElementOwner().onclick = event => {
+      mouseArea.onClick(MouseState.getMouseState(event))
+    }
+    mouseArea.getDomElementOwner().onchange = event => {
+      mouseArea.onChange(MouseState.getMouseState(event))
+    }
   }
 
   onMouseMoveWorker (event) {

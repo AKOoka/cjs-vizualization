@@ -1,20 +1,18 @@
 class MouseButtonState {
-  constructor (isLeftDown, isMiddleDown, isRightDown) {
-    this.isLeftDown = isLeftDown
-    this.isMiddleDown = isMiddleDown
-    this.isRightDown = isRightDown
+  constructor (buttonState) {
+    this.buttonState = buttonState
   }
 
   isLeftDown () {
-    return this.isLeftDown
+    return this.buttonState === 0
   }
 
   isMiddleDown () {
-    return this.isMiddleDown
+    return this.buttonState === 1
   }
 
   isRightDown () {
-    return this.isRightDown
+    return this.buttonState === 2
   }
 }
 

@@ -113,16 +113,6 @@ class App {
     this.viewRange.subscribe(this.timeLine)
     this.viewRange.subscribe(this.slider)
 
-    // test starts
-    // const plotterArea = new MouseArea(
-    //   this.context.jobsPlotter,
-    //   (s) => { console.log('down', s) },
-    //   (s) => { console.log('move', s) },
-    //   (s) => { console.log('up', s) }
-    // )
-    // this.mouseEventManager.subscribe(plotterArea)
-    // test ends
-
     console.log(this)
   }
 

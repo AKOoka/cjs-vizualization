@@ -3,40 +3,52 @@ class MouseArea {
     domElementOwner,
     onMouseDown = () => {},
     onMouseMove = () => {},
-    onMouseUp = () => {}
+    onMouseUp = () => {},
+    onWheel = () => {},
+    onContextMenu = () => {},
+    onClick = () => {},
+    onChange = () => {}
   ) {
     this.domElementOwner = domElementOwner
     this.onMouseDown = onMouseDown
     this.onMouseMove = onMouseMove
     this.onMouseUp = onMouseUp
+    this.onWheel = onWheel
+    this.onContextMenu = onContextMenu
+    this.onClick = onClick
+    this.onChange = onChange
   }
 
   getDomElementOwner () {
     return this.domElementOwner
   }
 
-  getMouseDown () {
-    return this.onMouseDown
+  setMouseDown (eventListener) {
+    this.onMouseDown = eventListener
   }
 
-  setMouseDown (callback) {
-    this.onMouseDown = callback
+  setMouseMove (eventListener) {
+    this.onMouseMove = eventListener
   }
 
-  getMouseMove () {
-    return this.onMouseMove
+  setMouseUp (eventListener) {
+    this.onMouseUp = eventListener
   }
 
-  setMouseMove (callback) {
-    this.onMouseMove = callback
+  setWheel (eventListener) {
+    this.onWheel = eventListener
   }
 
-  getMouseUp () {
-    return this.onMouseUp
+  setContextMenu (eventListener) {
+    this.onContextMenu = eventListener
   }
 
-  setMouseUp (callback) {
-    this.onMouseUp = callback
+  setClick (eventListener) {
+    this.onClick = eventListener
+  }
+
+  setChange (eventListener) {
+    this.onChange = eventListener
   }
 }
 

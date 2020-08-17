@@ -1,10 +1,12 @@
 import { MouseButtonState } from './MouseButtonState.js'
 
 class MouseState {
-  constructor (x, y, mouseWheelValue, mouseButtonState) {
+  constructor (x, y, mouseWheelValue, target, ctrlKey, mouseButtonState) {
     this.x = x
     this.y = y
     this.mouseWheelValue = mouseWheelValue
+    this.target = target
+    this.ctrlKey = ctrlKey
     this.mouseButtonState = mouseButtonState
   }
 
@@ -21,7 +23,25 @@ class MouseState {
   }
 
   getMouseWheelValue () {
-    return this.mouseWheelValue
+    if (this.mouseWheelValue > 0) {
+      return 1
+    } else if (this.mouseWheelValue < 0) {
+      return -1
+    } else {
+      return this.mouseWheelValue
+    }
+  }
+
+  getTarget () {
+    return this.target
+  }
+
+  getCtrlKey () {
+    return this.ctrlKey
+  }
+
+  getFiles () {
+    return this.files
   }
 
   getMouseButtonState () {
@@ -29,15 +49,14 @@ class MouseState {
   }
 
   static getMouseState (event) {
-    const { clientX, clientY, deltaY, button } = event
-
-    const isLeftDown = button === 0
-    const isMiddleDown = button === 1
-    const isRightDown = button === 2
-
-    const mouseButtonState = new MouseButtonState(isLeftDown, isMiddleDown, isRightDown)
-
-    return new MouseState(clientX, clientY, deltaY, mouseButtonState)
+    return new MouseState(
+      event.clientX,
+      event.clientY,
+      event.deltaY,
+      event.target,
+      event.ctrlKey,
+      new MouseButtonState(event.button)
+    )
   }
 }
 

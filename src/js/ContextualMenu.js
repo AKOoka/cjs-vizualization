@@ -1,12 +1,15 @@
+import { MouseArea } from './MouseArea.js'
+import { app } from './App.js'
+
 class ContextualMenu {
   constructor () {
     this.menu = null
     this.menuIsAcitve = false
   }
 
-  showMenu ({ pageX, pageY }) {
-    this.menu.style.left = `${pageX}px`
-    this.menu.style.top = `${pageY}px`
+  showMenu (mouseState) {
+    this.menu.style.left = `${mouseState.getX()}px`
+    this.menu.style.top = `${mouseState.getY()}px`
 
     document.body.append(this.menu)
 
@@ -43,7 +46,12 @@ class ContextualMenu {
 
     menuOption.classList.add('plotter-menu__option')
     menuOption.textContent = text
-    menuOption.onclick = eventListener
+
+    const menuOptionMouseArea = new MouseArea(menuOption)
+
+    menuOptionMouseArea.setClick(eventListener)
+
+    app.getMouseEventManager().subscribe(menuOptionMouseArea)
 
     return menuOption
   }
