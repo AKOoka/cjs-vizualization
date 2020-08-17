@@ -20,8 +20,6 @@ class MouseState {
     return { x: this.x, y: this.y }
   }
 
-  getRelativePosition (offset) {}
-
   getMouseWheelValue () {
     return this.mouseWheelValue
   }

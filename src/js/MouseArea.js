@@ -19,12 +19,24 @@ class MouseArea {
     return this.onMouseDown
   }
 
+  setMouseDown (callback) {
+    this.onMouseDown = callback
+  }
+
   getMouseMove () {
     return this.onMouseMove
   }
 
+  setMouseMove (callback) {
+    this.onMouseMove = callback
+  }
+
   getMouseUp () {
     return this.onMouseUp
+  }
+
+  setMouseUp (callback) {
+    this.onMouseUp = callback
   }
 }
 

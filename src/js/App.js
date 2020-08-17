@@ -6,7 +6,6 @@ import { TimeLine } from './TimeLine.js'
 import { Slider } from './Slider.js'
 import { MouseEventManager } from './MouseEventManager.js'
 import { ViewRange } from './ViewRange.js'
-// import { MouseArea } from './MouseArea.js'
 
 class App {
   constructor () {
