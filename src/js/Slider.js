@@ -14,7 +14,6 @@ class Slider {
     this.endAnchor = null
 
     this.lastTarget = 0
-    this.dragged = null
   }
 
   createSliderSideAnchorDom (anchorName, anchorPosition) {
@@ -27,10 +26,6 @@ class Slider {
     sideAnchorDom.style.width = `${this.anchorWidth}px`
     sideAnchorDom.style.left = `${anchorPosition}px`
 
-    sideAnchorDom.onmousedown = event => {
-      onMousedown(event, this)
-    }
-
     return sideAnchorDom
   }
 
@@ -42,57 +37,71 @@ class Slider {
     centerAnchorDom.style.left = `${leftPosition}px`
     centerAnchorDom.style.right = `${rightPosition}px`
 
-    centerAnchorDom.onmousedown = event => {
-      onMousedown(event, this)
-    }
-
     return centerAnchorDom
   }
 
   setContext (context) {
     this.context = context
 
-    this.startAnchor = this.createSliderSideAnchorDom('start', 0, () => {})
-    this.endAnchor = this.createSliderSideAnchorDom('end', this.context.slider.offsetWidth, onMousedown)
-    this.centerAnchor = this.createSliderCenterAnchorDom(0, 0, onMousedown)
+    this.startAnchor = this.createSliderSideAnchorDom('start', 0)
+    this.endAnchor = this.createSliderSideAnchorDom('end', this.context.slider.offsetWidth)
+    this.centerAnchor = this.createSliderCenterAnchorDom(0, 0)
 
     // test start
     this.startAnchorIsDragged = false
+    this.endAnchorIsDragged = false
+    this.centerAnchorIsDragged = false
 
-    const mousedown = (mouseState) => {
-      this.startAnchorIsDragged = true
-      console.log('down')
-    }
-    const mousemove = (mouseState) => {
-      const target = mouseState.getX() - this.context.slider.offsetLeft
-
-      this.moveRangeTo(target)
-
-      this.lastTarget = target
-
-      console.log('move', target)
-    }
-    const mouseup = (mouseState) => {
-      this.startAnchorIsDragged = false
-
-      console.log('up')
-    }
-
-    this.startAnchorMouseArea = new MouseArea(this.startAnchor, mousedown, mousemove, mouseup)
+    this.startAnchorMouseArea = new MouseArea(
+      this.startAnchor,
+      () => {
+        this.startAnchorIsDragged = true
+      },
+      (mouseState) => {
+        const target = mouseState.getX() - this.context.slider.offsetLeft
+        this.moveRangeTo(target)
+      },
+      () => {
+        this.startAnchorIsDragged = false
+      }
+    )
+    this.endAnchorMouseArea = new MouseArea(
+      this.endAnchor,
+      () => {
+        this.endAnchorIsDragged = true
+      },
+      (mouseState) => {
+        const target = mouseState.getX() - this.context.slider.offsetLeft
+        this.moveRangeTo(target)
+      },
+      () => {
+        this.endAnchorIsDragged = false
+      }
+    )
+    this.centerAnchorMouseArea = new MouseArea(
+      this.centerAnchor,
+      (mouseState) => {
+        this.centerAnchorIsDragged = true
+        this.lastTarget = mouseState.getX() - this.context.slider.offsetLeft
+      },
+      (mouseState) => {
+        const target = mouseState.getX() - this.context.slider.offsetLeft
+        this.moveRangeTo(target)
+        this.lastTarget = target
+      },
+      () => {
+        this.centerAnchorIsDragged = false
+      }
+    )
 
     app.getMouseEventManager().subscribe(this.startAnchorMouseArea)
+    app.getMouseEventManager().subscribe(this.endAnchorMouseArea)
+    app.getMouseEventManager().subscribe(this.centerAnchorMouseArea)
     // test ends
 
     this.context.slider.append(this.startAnchor)
     this.context.slider.append(this.centerAnchor)
     this.context.slider.append(this.endAnchor)
-
-    document.addEventListener('mousemove', event => {
-      onMousemove(event, this)
-    })
-    document.addEventListener('mouseup', event => {
-      onMouseup(event, this)
-    })
   }
 
   setViewRange (viewRange) {
@@ -107,7 +116,7 @@ class Slider {
 
     if (this.startAnchorIsDragged) {
       startPos = Math.max(0, Math.min(target, endPos - this.anchorHalfWidth))
-    } else if (this.dragged === 'end-slider') {
+    } else if (this.endAnchorIsDragged) {
       endPos = Math.min(this.context.slider.offsetWidth, Math.max(target, startPos + this.anchorHalfWidth))
     } else {
       let moveVelocity = target - this.lastTarget
@@ -140,44 +149,12 @@ class Slider {
     this.centerAnchor.style.width = `${endPos - startPos}px`
   }
 
-  moveRangeTo (target) {
+  moveRangeTo (target) { // divide an destroy this method
     const { startPos, endPos } = this.getSliderPosition(target)
 
     this.drawSlider(startPos, endPos)
 
     this.viewRange.setRange(startPos / this.context.slider.offsetWidth, endPos / this.context.slider.offsetWidth, this)
-  }
-}
-
-function onMousedown (event, slider) {
-  slider.dragged = event.target.id
-}
-
-function onMousemove (event, slider) {
-  const target = event.clientX - slider.context.slider.offsetLeft
-
-  if (slider.dragged) {
-    // slider.moveSliderTo(target)
-    slider.moveRangeTo(target)
-    if (slider.dragged === 'center-slider') {
-      event.target.style.cursor = 'grabbing'
-    }
-  }
-
-  slider.lastTarget = target
-}
-
-function onMouseup (event, slider) {
-  if (slider.dragged) {
-    const target = event.clientX - slider.context.slider.offsetLeft
-
-    slider.moveRangeTo(target)
-
-    if (slider.dragged === 'center-slider') {
-      event.target.style.cursor = 'grab'
-    }
-
-    slider.dragged = null
   }
 }
 
