@@ -1,7 +1,8 @@
 import { parseData } from './parsing.js'
 import { ObservableModel } from './ObservableModel.js'
 import { FileManager } from './FileManager.js'
-import { JobsPlotter } from './JobsPlotter.js'
+import { JobsDomPlotter } from './JobsDomPlotter.js'
+import { JobsPixiPlotter } from './JobsPixiPlotter.js'
 import { TimeLine } from './TimeLine.js'
 import { Slider } from './Slider.js'
 import { MouseEventManager } from './MouseEventManager.js'
@@ -13,7 +14,8 @@ class App {
     this.context = null
     this.model = new ObservableModel()
     this.fileManager = new FileManager()
-    this.jobsPlotter = new JobsPlotter()
+    this.jobsPlotter = new JobsDomPlotter()
+    // this.jobsPlotter = new JobsPixiPlotter()
     this.timeLine = new TimeLine()
     this.slider = new Slider()
     this.mouseEventManager = new MouseEventManager()
