@@ -17207,7 +17207,7 @@ var PIXI = (function (exports) {
 	     */
 	    ContextSystem.prototype.getExtensions = function () {
 	        // time to set up default extensions that Pixi uses.
-	        var gl = this.gl;
+          var gl = this.gl;
 	        if (this.webGLVersion === 1) {
 	            Object.assign(this.extensions, {
 	                drawBuffers: gl.getExtension('WEBGL_draw_buffers'),
@@ -17230,7 +17230,7 @@ var PIXI = (function (exports) {
 	                anisotropicFiltering: gl.getExtension('EXT_texture_filter_anisotropic'),
 	                // Floats and half-floats
 	                colorBufferFloat: gl.getExtension('EXT_color_buffer_float'),
-	                floatTextureLinear: gl.getExtension('OES_texture_float_linear'),
+                  floatTextureLinear: gl.getExtension('OES_texture_float_linear'),
 	            });
 	        }
 	    };
@@ -18868,9 +18868,9 @@ var PIXI = (function (exports) {
 	                nameCache[name] = 1;
 	            }
 	            this.vertexSrc = "#define SHADER_NAME " + name + "\n" + this.vertexSrc;
-	            this.fragmentSrc = "#define SHADER_NAME " + name + "\n" + this.fragmentSrc;
+              this.fragmentSrc = "#define SHADER_NAME " + name + "\n" + this.fragmentSrc;
 	            this.vertexSrc = setPrecision(this.vertexSrc, settings.PRECISION_VERTEX, exports.PRECISION.HIGH);
-	            this.fragmentSrc = setPrecision(this.fragmentSrc, settings.PRECISION_FRAGMENT, getMaxFragmentPrecision());
+              this.fragmentSrc = setPrecision(this.fragmentSrc, settings.PRECISION_FRAGMENT, getMaxFragmentPrecision());
 	        }
 	        // currently this does not extract structs only default types
 	        this.extractData(this.vertexSrc, this.fragmentSrc);

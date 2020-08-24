@@ -25,6 +25,10 @@ class JobsDomPlotter extends JobsPlotter {
   setModel (model) {
     super.setModel(model)
 
+    this.jobsComposer.createModel(model)
+
+    this.createJobsRanges()
+
     this.mouseActionController.setContext(this.context, this.processorsContainer)
     this.mouseActionController.setModel(model)
   }

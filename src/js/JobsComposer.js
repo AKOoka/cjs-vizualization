@@ -51,6 +51,12 @@ function convertHsvToRgb (hue, saturation, value) {
       break
   }
 
+  return { r, g, b }
+}
+
+function rgbToString (color) {
+  const { r, g, b } = color
+
   return `${Math.round(r * 255)}, ${Math.round(g * 255)}, ${Math.round(b * 255)}`
 }
 
@@ -99,4 +105,4 @@ class JobsComposer {
   createModel (model) {}
 }
 
-export { JobsComposer }
+export { JobsComposer, rgbToString }

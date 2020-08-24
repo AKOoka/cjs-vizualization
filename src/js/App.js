@@ -14,8 +14,8 @@ class App {
     this.context = null
     this.model = new ObservableModel()
     this.fileManager = new FileManager()
-    this.jobsPlotter = new JobsDomPlotter()
-    // this.jobsPlotter = new JobsPixiPlotter()
+    // this.jobsPlotter = new JobsDomPlotter()
+    this.jobsPlotter = new JobsPixiPlotter()
     this.timeLine = new TimeLine()
     this.slider = new Slider()
     this.mouseEventManager = new MouseEventManager()

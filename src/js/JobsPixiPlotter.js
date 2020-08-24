@@ -1,5 +1,5 @@
 import { JobsPlotter } from './JobsPlotter.js'
-import { JobsPixiComposer } from './JobsPixiComposer.js'
+// import { JobsPixiComposer } from './JobsPixiComposer.js'
 import { PixiRenderer } from './PixiRenderer.js'
 import { MousePixiActionController } from './MousePixiActionController.js'
 
@@ -7,7 +7,7 @@ class JobsPixiPlotter extends JobsPlotter {
   constructor () {
     super()
 
-    this.jobsComposer = new JobsPixiComposer()
+    // this.jobsComposer = new JobsPixiComposer()
     this.renderer = new PixiRenderer()
     this.mouseActionController = new MousePixiActionController()
   }
@@ -23,6 +23,7 @@ class JobsPixiPlotter extends JobsPlotter {
     super.setModel(model)
 
     // this.mouseActionController.setModel()
+    this.createJobsRanges()
   }
 
   createJobsRanges () {
@@ -30,18 +31,20 @@ class JobsPixiPlotter extends JobsPlotter {
       this.changeContainer('processorLabelsContainer', this.createProcessorLabelsContainer())
     }
 
-    for (const processorId of this.jobsComposer.processors.keys()) {
-      this.processorLabelsContainer.append(this.createProcessorLabel(processorId))
+    for (const job of this.model.jobRecords.values()) {
+      this.renderer.addJob(job)
     }
 
-    this.renderer.setScene(this.context.jobsPlotter.offsetWidth, this.jobsComposer.processors.size * 28)
+    this.renderer.setScene(this.context.jobsPlotter.offsetWidth, 8 * 28)
+
+    this.context.jobsPlotter.append(this.renderer.getScene())
   }
 
   watchRangeChanges (startPos, endPos) {
 
   }
 
-  adjustRanges (scaleFactor, translateFactor, traslateStart) {
+  adjustRanges (scaleFactor, translateFactor, translateStart) {
     // const { range } = this.jobsComposer.jobsModel[index]
     // const { job, rangeCounter } = this.model.jobRanges[index]
     // const { beginTimestamp, endTimestamp } = this.model.jobRecords.get(job).ranges[rangeCounter]
@@ -58,8 +61,9 @@ class JobsPixiPlotter extends JobsPlotter {
     //   range.classList.remove('hiddeText')
     // }
 
-    this.renderer.scaleRanges(scaleFactor)
-    this.renderer.translateRange(traslateStart * scaleFactor, translateFactor)
+    this.renderer.transformRanges(translateStart * scaleFactor, translateFactor, scaleFactor)
+    // this.renderer.scaleRanges(scaleFactor)
+    // this.renderer.translateRange(translateStart * scaleFactor, translateFactor)
   }
 }
 

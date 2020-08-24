@@ -1,4 +1,4 @@
-import { JobsComposer } from './JobsComposer.js'
+import { JobsComposer, rgbToString } from './JobsComposer.js'
 
 class JobsDomComposer extends JobsComposer {
   createJobsModelRange (jobId, rangeCounter, jobName, jobTimeSpan, color) {
@@ -9,7 +9,7 @@ class JobsDomComposer extends JobsComposer {
     range.classList.add(`range-${rangeCounter}`)
     range.textContent = jobName
     range.title = `job name: ${jobName}\njob time span: ${jobTimeSpan}`
-    range.style.backgroundColor = `rgb(${color})`
+    range.style.backgroundColor = `rgb(${rgbToString(color)})`
 
     return range
   }

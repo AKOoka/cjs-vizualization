@@ -5,7 +5,6 @@ class JobsPlotter {
   constructor () {
     this.context = null
     this.model = null
-    this.jobsComposer = null
     this.mouseActionController = null
     this.processorLabelsContainer = null
     this.viewRange = null
@@ -33,10 +32,6 @@ class JobsPlotter {
 
   setModel (model) {
     this.model = model
-
-    this.jobsComposer.createModel(model)
-
-    this.createJobsRanges()
   }
 
   setViewRange (viewRange) {
