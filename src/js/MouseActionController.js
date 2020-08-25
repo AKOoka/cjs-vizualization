@@ -22,14 +22,14 @@ class MouseActionController {
         this.contextualMenu.showMenu(mouseState)
       })
       processorMouseArea.setMouseDown(mouseState => {
-        const isRange = mouseState.getTarget().className.includes('range')
+        const isRange = mouseState.target.className.includes('range')
 
         this.contextualMenu.hideMenu()
 
-        if (mouseState.getCtrlKey() && isRange) {
-          this.deselectJob(mouseState.getTarget())
+        if (mouseState.keyState.ctrlKey && isRange) {
+          this.deselectJob(mouseState.target)
         } else if (isRange) {
-          this.selectJob(mouseState.getTarget())
+          this.selectJob(mouseState.target)
         } else {
           this.deselectAllJobs()
         }

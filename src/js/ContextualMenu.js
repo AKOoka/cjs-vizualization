@@ -8,8 +8,8 @@ class ContextualMenu {
   }
 
   showMenu (mouseState) {
-    this.menu.style.left = `${mouseState.getX()}px`
-    this.menu.style.top = `${mouseState.getY()}px`
+    this.menu.style.left = `${mouseState.x}px`
+    this.menu.style.top = `${mouseState.y}px`
 
     document.body.append(this.menu)
 

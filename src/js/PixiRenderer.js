@@ -11,76 +11,46 @@ class PixiRenderer {
     this.size = []
   }
 
-  addJob (job) {
-    const { ranges } = job
+  addRange (x, y, width, height, color) {
+    const offset = this.pos.length / 2
+    const { r, g, b } = color
 
-    for (const range of ranges) {
-      const { beginTimestamp, endTimestamp, processorId } = range
-
-      const width = parseFloat(endTimestamp - beginTimestamp)
-      const height = 20.0
-
-      const offset = this.pos.length / 2
-
-      this.pos.push(
-        beginTimestamp, processorId * 28,
-        beginTimestamp, processorId * 28 - 20,
-        beginTimestamp + width, processorId * 28 - 20,
-        beginTimestamp + width, processorId * 28
-      )
-      this.colors.push(
-        0.7, 0.1, 0.1,
-        0.7, 0.1, 0.1,
-        0.7, 0.1, 0.1,
-        0.7, 0.1, 0.1
-      )
-      this.uvs.push(
-        0, 0,
-        0, 1,
-        1, 1,
-        1, 0
-      )
-      this.ib.push(
-        offset, offset + 1, offset + 2,
-        offset, offset + 2, offset + 3
-      )
-      this.size.push(
-        width, height,
-        width, height,
-        width, height,
-        width, height
-      )
-    }
-  }
-
-  addRange (x, y, width, color) {
-    this.scalableContainer.beginFill(color)
-    this.scalableContainer.drawRect(x, y, width, 20)
-    this.scalableContainer.endFill()
+    this.pos.push(
+      x, y,
+      x, y - height,
+      x + width, y - height,
+      x + width, y
+    )
+    this.colors.push(
+      r, g, b,
+      r, g, b,
+      r, g, b,
+      r, g, b
+    )
+    this.uvs.push(
+      0, 0,
+      0, 1,
+      1, 1,
+      1, 0
+    )
+    this.ib.push(
+      offset, offset + 1, offset + 2,
+      offset, offset + 2, offset + 3
+    )
+    this.size.push(
+      width, height,
+      width, height,
+      width, height,
+      width, height
+    )
   }
 
   transformRanges (translateStart, translateFactor, scaleFactor) {
-    // this.scalableContainer.setTransform(
-    //   -translateStart - translateFactor,
-    //   0,
-    //   scaleFactor
-    // )
     this.mesh.setTransform(
       -translateStart - translateFactor,
       0,
       scaleFactor
     )
-  }
-
-  scaleRanges (scaleFactor) {
-    this.scalableContainer.scale = scaleFactor
-  }
-
-  translateRange (translateStart, translateFactor) {
-    // this.scalableContainer.translate(-translateFactor)
-    // this.scalableContainer.translate(-translateStart)
-    // this.nonScalableContainer.translate(-translateFactor)
-    // this.nonScalableContainer.translate(-translateStart)
   }
 
   initMesh () {
@@ -176,20 +146,19 @@ class PixiRenderer {
   }
 
   getScene () {
-    return this.scene?.view
+    return this.scene.view
   }
 
   setScene (width, height) {
-    this.scene = new PIXI.Application({ transparent: true, width, height })
+    this.scene = new PIXI.Application({ transparent: false, width, height })
 
-    console.log(this)
+    console.log('pixi renderer', this)
 
     this.initMesh()
   }
 
   clearScene () {
-    this.scalableContainer.clear()
-    this.nonScalableContainer.clear()
+    // clear mesh or application
   }
 }
 

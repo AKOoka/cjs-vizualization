@@ -31,7 +31,7 @@ class Slider {
     const leftAnchorMouseArea = new MouseArea(this.leftAnchor.getDomElement())
 
     leftAnchorMouseArea.setMouseMove(mouseState => {
-      const target = mouseState.getX() - this.getX()
+      const target = mouseState.x - this.getX()
       const endPos = this.rightAnchor.getX()
       const startPos = Math.max(0, Math.min(target, endPos - this.leftAnchor.getWidth() / 2))
 
@@ -41,7 +41,7 @@ class Slider {
     const rightAnchorMouseArea = new MouseArea(this.rightAnchor.getDomElement())
 
     rightAnchorMouseArea.setMouseMove(mouseState => {
-      const target = mouseState.getX() - this.getX()
+      const target = mouseState.x - this.getX()
       const startPos = this.leftAnchor.getX()
       const endPos = Math.min(this.getWidth(), Math.max(target, startPos + this.leftAnchor.getWidth() / 2))
 
@@ -51,10 +51,10 @@ class Slider {
     const centerAnchorMouseArea = new MouseArea(this.centerAnchor.getDomElement())
 
     centerAnchorMouseArea.setMouseDown(mouseState => {
-      this.lastTarget = mouseState.getX() - this.getX()
+      this.lastTarget = mouseState.x - this.getX()
     })
     centerAnchorMouseArea.setMouseMove(mouseState => {
-      const target = mouseState.getX() - this.getX()
+      const target = mouseState.x - this.getX()
 
       let startPos = this.leftAnchor.getX()
       let endPos = this.rightAnchor.getX()

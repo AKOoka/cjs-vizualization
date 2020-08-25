@@ -3,52 +3,24 @@ import { app } from './App.js'
 
 class JobsPlotter {
   constructor () {
-    this.context = null
-    this.model = null
-    this.mouseActionController = null
-    this.processorLabelsContainer = null
-    this.viewRange = null
+    this._context = null
+    this._model = null
+    this._mouseActionController = null
+    this._processorLabelsContainer = null
+    this._viewRange = null
   }
 
-  setContext (context) {
-    this.context = context
+  _zoomRange (relMouseX, zoomDirection) {
+    const pivot = relMouseX / this._context.jobsPlotter.offsetWidth
+    const zoomVelocity = 0.1 * this._viewRange.width
 
-    this.processorLabelsContainer = this.createProcessorLabelsContainer()
-
-    this.context.processorLabels.append(this.processorLabelsContainer)
-
-    const plotterMouseArea = new MouseArea(this.context.jobsPlotter)
-
-    plotterMouseArea.setWheel(mouseState => {
-      const { startPos, endPos } = this.zoomRange(
-        mouseState.getX() - this.context.jobsPlotter.offsetLeft,
-        mouseState.getMouseWheelValue()
-      )
-      this.viewRange.setRange(startPos, endPos)
-    })
-
-    app.getMouseEventManager().subscribe(plotterMouseArea)
-  }
-
-  setModel (model) {
-    this.model = model
-  }
-
-  setViewRange (viewRange) {
-    this.viewRange = viewRange
-  }
-
-  zoomRange (relMouseX, zoomDirection) {
-    const pivot = relMouseX / this.context.jobsPlotter.offsetWidth
-    const zoomVelocity = 0.1 * this.viewRange.width
-
-    const startPos = Math.max(0, this.viewRange.start + zoomDirection * zoomVelocity * pivot * -1)
-    const endPos = Math.min(1, this.viewRange.end + zoomDirection * zoomVelocity * (1 - pivot))
+    const startPos = Math.max(0, this._viewRange.start + zoomDirection * zoomVelocity * pivot * -1)
+    const endPos = Math.min(1, this._viewRange.end + zoomDirection * zoomVelocity * (1 - pivot))
 
     return { startPos, endPos }
   }
 
-  createProcessorLabel (processorId) {
+  _createProcessorLabel (processorId) {
     const processorLabel = document.createElement('div')
 
     processorLabel.classList.add('processor-label')
@@ -57,7 +29,7 @@ class JobsPlotter {
     return processorLabel
   }
 
-  createProcessorLabelsContainer () {
+  _createProcessorLabelsContainer () {
     const processorLabelsContainer = document.createElement('div')
 
     processorLabelsContainer.classList.add('processor-labels-container')
@@ -65,35 +37,46 @@ class JobsPlotter {
     return processorLabelsContainer
   }
 
-  changeContainer (key, container) {
+  _changeContainer (key, container) {
     this[key].replaceWith(container)
     this[key] = container
   }
 
-  createJobsRanges () {}
+  _createJobsRanges () {}
 
-  watchRangeChanges (startPos, endPos) {}
+  setContext (context) {
+    this._context = context
 
-  adjustRanges (scaleWidthFactor, translateFactor, traslateStart) {}
+    this._processorLabelsContainer = this._createProcessorLabelsContainer()
 
-  updateRange () {
-    if (!this.model) {
-      return
-    }
+    this._context.processorLabels.append(this._processorLabelsContainer)
 
-    const startTime = this.model.meta.startTime.getTime()
-    const timeSpan = this.model.meta.timeSpan.getTime()
-    const startPos = this.viewRange.start * timeSpan + startTime
-    const endPos = this.viewRange.end * timeSpan + startTime
+    const plotterMouseArea = new MouseArea(this._context.jobsPlotter)
 
-    const contextWidth = this.context.jobsPlotter.offsetWidth
-    const scaleFactor = 1 / this.viewRange.width
-    const scaleWidthFactor = 1 / (timeSpan) * scaleFactor * contextWidth
-    const translateFactor = this.viewRange.start * scaleFactor * contextWidth
+    plotterMouseArea.setWheel(mouseState => {
+      const { startPos, endPos } = this._zoomRange(
+        mouseState.x - this._context.jobsPlotter.offsetLeft,
+        mouseState.getMouseWheelValue()
+      )
+      this._viewRange.setRange(startPos, endPos)
+    })
 
-    this.watchRangeChanges(startPos, endPos)
-    this.adjustRanges(scaleWidthFactor, translateFactor, startTime)
+    app.getMouseEventManager().subscribe(plotterMouseArea)
   }
+
+  setModel (model) {
+    this._model = model
+
+    this._jobsBuilder.createModel(model)
+
+    this._createJobsRanges()
+  }
+
+  setViewRange (viewRange) {
+    this._viewRange = viewRange
+  }
+
+  updateRange () {}
 }
 
 export { JobsPlotter }

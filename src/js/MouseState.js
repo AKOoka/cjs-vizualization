@@ -1,60 +1,60 @@
 import { MouseButtonState } from './MouseButtonState.js'
 
 class MouseState {
-  constructor (x, y, mouseWheelValue, target, ctrlKey, mouseButtonState) {
-    this.x = x
-    this.y = y
-    this.mouseWheelValue = mouseWheelValue
-    this.target = target
-    this.ctrlKey = ctrlKey
-    this.mouseButtonState = mouseButtonState
+  constructor (x, y, mouseWheelValue, target, keyState, mouseButtonState) {
+    this._x = x
+    this._y = y
+    this._mouseWheelValue = mouseWheelValue
+    this._target = target
+    this._keyState = keyState
+    this._mouseButtonState = mouseButtonState
   }
 
-  getX () {
-    return this.x
+  get x () {
+    return this._x
   }
 
-  getY () {
-    return this.y
+  get y () {
+    return this._y
+  }
+
+  get target () {
+    return this._target
+  }
+
+  get files () {
+    return this._files
+  }
+
+  get keyState () {
+    return this._keyState
+  }
+
+  get mouseButtonState () {
+    return this._mouseButtonState
   }
 
   getPosition () {
-    return { x: this.x, y: this.y }
+    return { x: this._x, y: this._y }
   }
 
   getMouseWheelValue () {
-    if (this.mouseWheelValue > 0) {
+    if (this._mouseWheelValue > 0) {
       return 1
-    } else if (this.mouseWheelValue < 0) {
+    } else if (this._mouseWheelValue < 0) {
       return -1
     } else {
-      return this.mouseWheelValue
+      return this._mouseWheelValue
     }
   }
 
-  getTarget () {
-    return this.target
-  }
-
-  getCtrlKey () {
-    return this.ctrlKey
-  }
-
-  getFiles () {
-    return this.files
-  }
-
-  getMouseButtonState () {
-    return this.mouseButtonState
-  }
-
-  static getMouseState (event) {
+  static getMouseState (event, keyState) {
     return new MouseState(
       event.clientX,
       event.clientY,
       event.deltaY,
       event.target,
-      event.ctrlKey,
+      keyState,
       new MouseButtonState(event.button)
     )
   }

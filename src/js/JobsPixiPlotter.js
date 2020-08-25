@@ -1,5 +1,5 @@
 import { JobsPlotter } from './JobsPlotter.js'
-// import { JobsPixiComposer } from './JobsPixiComposer.js'
+import { JobsPixiBuilder } from './JobsPixiBuilder.js'
 import { PixiRenderer } from './PixiRenderer.js'
 import { MousePixiActionController } from './MousePixiActionController.js'
 
@@ -7,63 +7,63 @@ class JobsPixiPlotter extends JobsPlotter {
   constructor () {
     super()
 
-    // this.jobsComposer = new JobsPixiComposer()
-    this.renderer = new PixiRenderer()
-    this.mouseActionController = new MousePixiActionController()
+    this._jobsBuilder = new JobsPixiBuilder()
+    this._renderer = new PixiRenderer()
+    this._mouseActionController = new MousePixiActionController()
+  }
+
+  _createJobsRanges () {
+    if (this._processorLabelsContainer.children.length > 0) {
+      this._changeContainer('_processorLabelsContainer', this._createProcessorLabelsContainer())
+    }
+
+    for (const job of this._model.jobRecords.values()) {
+      const { name, ranges } = job
+      const jobColor = this._jobsBuilder.jobsModel.get(name).hsvToRgb()
+
+      for (const range of ranges) {
+        const { beginTimestamp, endTimestamp, processorId } = range
+
+        this._renderer.addRange(
+          beginTimestamp,
+          this._jobsBuilder.processors.get(processorId),
+          endTimestamp - beginTimestamp,
+          20,
+          jobColor
+        )
+      }
+    }
+
+    this._renderer.setScene(this._context.jobsPlotter.offsetWidth, 8 * 28)
+
+    this._context.jobsPlotter.append(this._renderer.getScene())
   }
 
   setContext (context) {
     super.setContext(context)
 
-    // this.context.jobsPlotter.append(this.renderer.getScene())
-    // this.mouseActionController.setContext()
+    // this._context.jobsPlotter.append(this.renderer.getScene())
+    // this._mouseActionController.setContext()
   }
 
   setModel (model) {
     super.setModel(model)
 
-    // this.mouseActionController.setModel()
-    this.createJobsRanges()
+    // this._mouseActionController.setModel()
   }
 
-  createJobsRanges () {
-    if (this.processorLabelsContainer.children.length > 0) {
-      this.changeContainer('processorLabelsContainer', this.createProcessorLabelsContainer())
+  updateRange () {
+    if (!this._model) {
+      return
     }
 
-    for (const job of this.model.jobRecords.values()) {
-      this.renderer.addJob(job)
-    }
+    const scaleFactor = 1 / this._viewRange.width
 
-    this.renderer.setScene(this.context.jobsPlotter.offsetWidth, 8 * 28)
+    const translateStart = this._model.meta.startTime.getTime() * scaleFactor
+    const translateFactor = this._viewRange.start * scaleFactor * this._context.jobsPlotter.offsetWidth
+    const scaleWidthFactor = 1 / this._model.meta.timeSpan.getTime() * scaleFactor * this._context.jobsPlotter.offsetWidth
 
-    this.context.jobsPlotter.append(this.renderer.getScene())
-  }
-
-  watchRangeChanges (startPos, endPos) {
-
-  }
-
-  adjustRanges (scaleFactor, translateFactor, translateStart) {
-    // const { range } = this.jobsComposer.jobsModel[index]
-    // const { job, rangeCounter } = this.model.jobRanges[index]
-    // const { beginTimestamp, endTimestamp } = this.model.jobRecords.get(job).ranges[rangeCounter]
-
-    // const width = (endTimestamp - beginTimestamp) * scaleWidthFactor
-    // const pos = (beginTimestamp - traslateStart) * scaleWidthFactor - translateFactor
-
-    // range.style.left = pos + 'px'
-    // range.style.width = Math.max(1, width) + 'px'
-
-    // if (width <= 40) {
-    //   range.classList.add('hiddeText')
-    // } else {
-    //   range.classList.remove('hiddeText')
-    // }
-
-    this.renderer.transformRanges(translateStart * scaleFactor, translateFactor, scaleFactor)
-    // this.renderer.scaleRanges(scaleFactor)
-    // this.renderer.translateRange(translateStart * scaleFactor, translateFactor)
+    this._renderer.transformRanges(translateStart, translateFactor, scaleWidthFactor)
   }
 }
 

@@ -6,7 +6,7 @@ class MouseArea {
     onMouseUp = () => {},
     onWheel = () => {},
     onContextMenu = () => {},
-    onClick = () => {},
+    onClick = () => {}
   ) {
     this.domElementOwner = domElementOwner
     this.onMouseDown = onMouseDown

@@ -115,7 +115,7 @@ class App {
     this.viewRange.subscribe(this.timeLine)
     this.viewRange.subscribe(this.slider)
 
-    console.log(this)
+    console.log('app context', this)
   }
 
   getMouseEventManager () {

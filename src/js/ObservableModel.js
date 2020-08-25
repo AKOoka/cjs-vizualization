@@ -13,7 +13,7 @@ class ObservableModel {
   fetchData (data) {
     this.wrappedModel.fetchData(data)
 
-    console.log(this.getModel())
+    console.log('data model', this.getModel())
     this.notify()
   }
 
