@@ -15,6 +15,7 @@ class JobsBuilder {
   }
 
   _generateColorsByModel (model) {
+    // make generation maps key jobId not jobName
     const jobNames = new Set()
     const jobColors = new Map()
 

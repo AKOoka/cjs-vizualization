@@ -59,9 +59,9 @@ class JobsPixiPlotter extends JobsPlotter {
 
     const scaleFactor = 1 / this._viewRange.width
 
-    const translateStart = this._model.meta.startTime.getTime() * scaleFactor
-    const translateFactor = this._viewRange.start * scaleFactor * this._context.jobsPlotter.offsetWidth
     const scaleWidthFactor = 1 / this._model.meta.timeSpan.getTime() * scaleFactor * this._context.jobsPlotter.offsetWidth
+    const translateFactor = this._viewRange.start * scaleFactor * this._context.jobsPlotter.offsetWidth
+    const translateStart = this._model.meta.startTime.getTime() * scaleWidthFactor
 
     this._renderer.transformRanges(translateStart, translateFactor, scaleWidthFactor)
   }
