@@ -1,83 +1,82 @@
 /* global PIXI */
-
+import * as PIXI from 'pixi.js'
 class PixiRenderer {
-  constructor () {
-    this.scene = null
-    this.mesh = null
-    this.uvs = []
-    this.pos = []
-    this.colors = []
-    this.ib = []
-    this.size = []
-  }
+    constructor() {
+        this.scene = null
+        this.mesh = null
+        this.uvs = []
+        this.pos = []
+        this.colors = []
+        this.ib = []
+        this.size = []
+    }
 
-  addRange (x, y, width, height, color) {
-    const offset = this.pos.length / 2
-    const { r, g, b } = color
+    addRange(x, y, width, height, color) {
+        const offset = this.pos.length / 2
+        const { r, g, b } = color
 
-    this.pos.push(
-      x, y,
-      x, y - height,
-      x + width, y - height,
-      x + width, y
-    )
-    this.colors.push(
-      r, g, b,
-      r, g, b,
-      r, g, b,
-      r, g, b
-    )
-    this.uvs.push(
-      0, 0,
-      0, 1,
-      1, 1,
-      1, 0
-    )
-    this.ib.push(
-      offset, offset + 1, offset + 2,
-      offset, offset + 2, offset + 3
-    )
-    this.size.push(
-      width, height,
-      width, height,
-      width, height,
-      width, height
-    )
-  }
+        this.pos.push(
+            x, y,
+            x, y - height,
+            x + width, y - height,
+            x + width, y
+        )
+        this.colors.push(
+            r, g, b,
+            r, g, b,
+            r, g, b,
+            r, g, b
+        )
+        this.uvs.push(
+            0, 0,
+            0, 1,
+            1, 1,
+            1, 0
+        )
+        this.ib.push(
+            offset, offset + 1, offset + 2,
+            offset, offset + 2, offset + 3
+        )
+        this.size.push(
+            width, height,
+            width, height,
+            width, height,
+            width, height
+        )
+    }
 
-  transformRanges (translateStart, translateFactor, scaleFactor) {
-    this.mesh.setTransform(
-      -translateStart - translateFactor,
-      0,
-      scaleFactor
-    )
-  }
+    transformRanges(translateStart, translateFactor, scaleFactor) {
+        this.mesh.setTransform(-translateStart - translateFactor,
+            0,
+            scaleFactor
+        )
+    }
 
-  initMesh () {
-    const geometry = new PIXI.Geometry()
-      .addAttribute(
-        'aPos',
-        this.pos,
-        2
-      )
-      .addAttribute(
-        'aUv',
-        this.uvs,
-        2
-      )
-      .addAttribute(
-        'aSize',
-        this.size,
-        2
-      )
-      .addAttribute(
-        'aColor',
-        this.colors,
-        3
-      )
-      .addIndex(this.ib)
+    initMesh() {
+        const geometry = new PIXI.Geometry()
+            .addAttribute(
+                'aPos',
+                this.pos,
+                2
+            )
+            .addAttribute(
+                'aUv',
+                this.uvs,
+                2
+            )
+            .addAttribute(
+                'aSize',
+                this.size,
+                2
+            )
+            .addAttribute(
+                'aColor',
+                this.colors,
+                3
+            )
+            .addIndex(this.ib)
 
-    const vertexSrc = `
+        const vertexSrc = `
       #version 300 es
       precision mediump float;
 
@@ -101,7 +100,7 @@ class PixiRenderer {
       }
     `
 
-    const fragmentSrc = `
+        const fragmentSrc = `
       #version 300 es
       precision mediump float;
 
@@ -134,32 +133,32 @@ class PixiRenderer {
       }
     `
 
-    const uniforms = {
-      borderWidth: 1.0
+        const uniforms = {
+            borderWidth: 1.0
+        }
+
+        const shader = PIXI.Shader.from(vertexSrc, fragmentSrc, uniforms)
+
+        this.mesh = new PIXI.Mesh(geometry, shader)
+
+        this.scene.stage.addChild(this.mesh)
     }
 
-    const shader = PIXI.Shader.from(vertexSrc, fragmentSrc, uniforms)
+    getScene() {
+        return this.scene.view
+    }
 
-    this.mesh = new PIXI.Mesh(geometry, shader)
+    setScene(width, height) {
+        this.scene = new PIXI.Application({ transparent: true, width, height })
 
-    this.scene.stage.addChild(this.mesh)
-  }
+        console.log('pixi renderer', this)
 
-  getScene () {
-    return this.scene.view
-  }
+        this.initMesh()
+    }
 
-  setScene (width, height) {
-    this.scene = new PIXI.Application({ transparent: false, width, height })
-
-    console.log('pixi renderer', this)
-
-    this.initMesh()
-  }
-
-  clearScene () {
-    // clear mesh or application
-  }
+    clearScene() {
+        // clear mesh or application
+    }
 }
 
 export { PixiRenderer }
