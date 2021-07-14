@@ -1,59 +1,31 @@
-const path = require('path');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-const { CleanWebpackPlugin } = require('clean-webpack-plugin');
-const Autoprefixer = require('autoprefixer');
+const HtmlWebpackPlugin = require('html-webpack-plugin')
+const path = require('path')
 
 module.exports = {
-    entry: './src/js/main.js',
-    mode: 'development',
-    devtool: 'inline-source-map',
-
-    output: {
-        filename: 'bundle.js',
-        path: path.resolve(__dirname, 'build'),
-        publicPath: '/',
-    },
-
-    resolve: {
-        extensions: ['*', '.js'],
-    },
-
-    devServer: {
-        host: 'localhost',
-        port: 8080,
-        inline: true,
-        contentBase: './build',
-    },
-
-    module: {
-        rules: [
-            { test: /\.js$/, exclude: /node_modules/, use: ['babel-loader'] },
-            {
-                test: /\.scss$/,
-                use: [{
-                    loader: 'style-loader', // inject CSS to page
-                }, {
-                    loader: 'css-loader', // translates CSS into CommonJS modules
-                }, {
-                    loader: 'postcss-loader', // Run postcss actions
-                    options: {
-                        plugins() { // postcss plugins, can be exported to postcss.config.js
-                            return [
-                                Autoprefixer,
-                            ];
-                        },
-                    },
-                }, {
-                    loader: 'sass-loader', // compiles Sass to CSS
-                }],
-            },
-        ],
-    },
-
-    plugins: [
-        new HtmlWebpackPlugin({
-            template: './public/index.html'
-        }),
-        new CleanWebpackPlugin(),
-    ],
-};
+  entry: './src/ts/index.ts',
+  module: {
+    rules: [
+      {
+        test: /\.scss$/,
+        use: ['style-loader', 'css-loader', 'sass-loader']
+      },
+      {
+        test: /\.tsx?$/,
+        use: ['ts-loader'],
+        exclude: /node_modules/
+      }
+    ]
+  },
+  resolve: {
+    extensions: ['.ts', '.js', '.tsx']
+  },
+  output: {
+    filename: 'bundle.js',
+    path: path.resolve(__dirname, 'dist')
+  },
+  plugins: [
+    new HtmlWebpackPlugin({
+      template: path.resolve(__dirname, 'src', 'index.html')
+    })
+  ]
+}
