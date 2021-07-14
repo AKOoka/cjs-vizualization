@@ -10,7 +10,7 @@
 *.userosscache
 *.sln.docstates
 *.png
-*.json
+## *.json
 *.txt
 
 *.sln
